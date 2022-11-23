@@ -1,6 +1,5 @@
 package com.readingisgood.bookapi.domain.statistic;
 
-import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +25,7 @@ public class StatisticController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+   /* @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping("customers/{id}")
     public ResponseEntity<Object> getMonthlyStatistics(@PathVariable(value = "id") @Valid UUID customerId) {
         try {
@@ -37,6 +36,6 @@ public class StatisticController {
             return ResponseEntity.internalServerError()
                     .body(new ServiceErrorMessage("Bir hata oluştu"));
         }
-    }
+    }*/
 
 }

@@ -1,6 +1,7 @@
 package com.readingisgood.bookapi.domain.customer.model;
 
 import com.readingisgood.bookapi.domain.common.controller.BaseRequest;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,12 +13,15 @@ import java.util.UUID;
 public class CustomerUpdateRequest extends BaseRequest {
 
     @NotNull(message = "id is mandatory")
+    @ApiModelProperty(required = true)
     private UUID id;
 
     @NotNull(message = "name is mandatory")
+    @ApiModelProperty(required = true)
     private String name;
 
     @NotNull(message = "name is mandatory")
+    @ApiModelProperty(required = true)
     private String surname;
     private String birthDate;
     private String address;

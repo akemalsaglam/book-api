@@ -4,29 +4,39 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.Email;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public class AuditingEntity implements Serializable {
 
-    @Email
-    private String createdByEmail;
-    private ZonedDateTime createdTime;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
 
-    @Email
-    private String updatedByEmail;
-    private ZonedDateTime updatedTime;
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;
 
-    @Email
-    private String deletedByEmail;
-    private ZonedDateTime deletedTime;
+    @Column(name = "created_by")
+    @CreatedBy
+    private String createdBy;
+
+    @Column(name = "modified_by")
+    @LastModifiedBy
+    private String modifiedBy;
 
 }

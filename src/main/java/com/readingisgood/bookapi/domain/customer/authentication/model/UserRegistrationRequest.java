@@ -1,4 +1,4 @@
-package com.readingisgood.bookapi.security.authentication.model;
+package com.readingisgood.bookapi.domain.customer.authentication.model;
 
 import com.readingisgood.bookapi.domain.common.controller.BaseRequest;
 import lombok.Data;

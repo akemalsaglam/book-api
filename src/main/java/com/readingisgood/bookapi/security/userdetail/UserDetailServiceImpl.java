@@ -2,6 +2,7 @@ package com.readingisgood.bookapi.security.userdetail;
 
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +22,10 @@ public class UserDetailServiceImpl implements UserDetailService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws BadCredentialsException {
         CustomerEntity user = userService.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found: " + email);
+            throw new BadCredentialsException("User not found.");
         }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));

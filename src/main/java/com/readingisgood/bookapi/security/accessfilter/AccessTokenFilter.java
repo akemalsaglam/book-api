@@ -40,7 +40,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
 
         final String usernameFromToken = accessToken.getUsernameFromToken(token);
@@ -49,7 +48,6 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get user identity and set it on the spring security context
         UserDetails userDetails = jwtUserDetailService.loadUserByUsername(usernameFromToken);
 
         UsernamePasswordAuthenticationToken authentication =

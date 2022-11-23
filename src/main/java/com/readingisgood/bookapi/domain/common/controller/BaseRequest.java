@@ -11,11 +11,11 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class BaseRequest implements Serializable {
     private Object id;
-    private @Email String createdByEmail;
+   /* private @Email String createdByEmail;
     private ZonedDateTime createdTime;
     private @Email String updatedByEmail;
     private ZonedDateTime updatedTime;
     private @Email String deletedByEmail;
-    private ZonedDateTime deletedTime;
+    private ZonedDateTime deletedTime;*/
 
 }

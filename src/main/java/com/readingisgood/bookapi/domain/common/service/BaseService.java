@@ -7,11 +7,7 @@ public interface BaseService<Entity, ID> {
 
     Entity save(Entity entity);
 
-    Entity saveAndFlush(Entity entity);
-
     List<Entity> findAll();
-
-    List<Entity> findAllActive();
 
     Optional<Entity> findById(ID id);
 

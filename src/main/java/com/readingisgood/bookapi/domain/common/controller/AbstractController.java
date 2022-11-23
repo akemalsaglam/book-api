@@ -3,7 +3,6 @@ package com.readingisgood.bookapi.domain.common.controller;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
-import com.readingisgood.bookapi.domain.common.jpa.auditing.AuditingUtil;
 import com.readingisgood.bookapi.domain.common.mapper.BaseMapper;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
 
@@ -44,7 +43,6 @@ public class AbstractController<Entity extends BaseEntity,
             throw new ResourceNotFoundException();
         } else {
             Entity entity = this.mapper.mapRequestToEntity(request, optionalEntity.get());
-            AuditingUtil.setUpdateAuditInfo(entity);
             Entity updatedEntity = this.service.save(entity);
             return Optional.ofNullable(this.mapper.mapEntityToResponse(updatedEntity));
         }
@@ -53,7 +51,6 @@ public class AbstractController<Entity extends BaseEntity,
     @Override
     public Optional<Response> insert(Request eventRequest) {
         Entity eventEntity = mapper.mapRequestToEntity(eventRequest);
-        AuditingUtil.setUpdateAuditInfo(eventEntity);
         final Entity insertedEntity = service.save(eventEntity);
         return Optional.ofNullable(mapper.mapEntityToResponse(insertedEntity));
     }
@@ -68,7 +65,6 @@ public class AbstractController<Entity extends BaseEntity,
         final Optional<Entity> entity = service.findById(id);
         if (entity.isPresent()) {
             entity.get().setStatus(Status.PASSIVE.toString());
-            AuditingUtil.setDeleteAuditInfo(entity.get());
             service.save(entity.get());
         } else {
             throw new ResourceNotFoundException();

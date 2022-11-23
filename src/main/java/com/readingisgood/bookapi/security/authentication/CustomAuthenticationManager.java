@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationManager implements AuthenticationManager {
 
+    public static final String DEFAULT_BAD_CREDENTIAL_ERROR_MESSAGE = "Incorrect Credentials";
     private final UserDetailServiceImpl userDetailService;
     private final PasswordEncoder bcryptEncoder;
 
@@ -34,7 +35,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         String hashedPassword = user.getPassword();
 
         if (!bcryptEncoder.matches(providedPassword, hashedPassword))
-            throw new BadCredentialsException("Incorrect Credentials");
+            throw new BadCredentialsException(DEFAULT_BAD_CREDENTIAL_ERROR_MESSAGE);
 
         return new UsernamePasswordAuthenticationToken(
                 user, authentication.getCredentials(), user.getAuthorities());

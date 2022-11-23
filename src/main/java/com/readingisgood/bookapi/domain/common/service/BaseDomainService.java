@@ -25,19 +25,8 @@ public class BaseDomainService<E extends BaseEntity, Id> implements BaseService<
 
     @SuppressWarnings("unchecked")
     @Override
-    public E saveAndFlush(E entity) {
-        return repository.saveAndFlush(entity);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public List<E> findAll() {
         return repository.findAll();
-    }
-
-    @Override
-    public List<E> findAllActive() {
-        return repository.findByStatusIs(Status.ACTIVE.value);
     }
 
     @SuppressWarnings("unchecked")

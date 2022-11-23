@@ -1,22 +1,24 @@
-package com.readingisgood.bookapi.security.authentication;
+package com.readingisgood.bookapi.domain.customer.authentication;
 
 import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
+import com.readingisgood.bookapi.domain.customer.CustomerService;
 import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
-import com.readingisgood.bookapi.domain.customer.CustomerService;
 import com.readingisgood.bookapi.security.RoleType;
 import com.readingisgood.bookapi.security.accesstoken.impl.AccessToken;
 import com.readingisgood.bookapi.security.accesstoken.impl.MailValidationToken;
-import com.readingisgood.bookapi.security.accesstoken.impl.PasswordResetToken;
-import com.readingisgood.bookapi.security.authentication.model.LoginResponse;
-import com.readingisgood.bookapi.security.authentication.model.UserRegistrationRequest;
-import com.readingisgood.bookapi.security.authentication.model.UserRegistrationResponse;
+import com.readingisgood.bookapi.domain.common.exception.UserActivationNeededException;
+import com.readingisgood.bookapi.domain.customer.authentication.model.LoginResponse;
+import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationRequest;
+import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationResponse;
 import com.readingisgood.bookapi.security.userdetail.UserDetailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class AuthenticationService {
     private final PasswordEncoder bcryptEncoder;
     private final CustomerService userService;
     private final MailValidationToken mailValidationToken;
-    private final PasswordResetToken passwordResetToken;
+
     private final UserDetailService userDetailService;
     private final AccessToken accessJWTToken;
     private final AuthenticationManager authenticationManager;
@@ -44,14 +46,12 @@ public class AuthenticationService {
     public AuthenticationService(PasswordEncoder bcryptEncoder,
                                  CustomerService userService,
                                  MailValidationToken mailValidationToken,
-                                 PasswordResetToken passwordResetToken,
                                  UserDetailService userDetailService,
                                  AccessToken accessJWTToken,
                                  AuthenticationManager authenticationManager) {
         this.bcryptEncoder = bcryptEncoder;
         this.userService = userService;
         this.mailValidationToken = mailValidationToken;
-        this.passwordResetToken = passwordResetToken;
         this.userDetailService = userDetailService;
         this.accessJWTToken = accessJWTToken;
         this.authenticationManager = authenticationManager;
@@ -87,13 +87,13 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public LoginResponse login(String email, String password) {
+    public LoginResponse login(String email, String password) throws AuthenticationException {
         Authentication authenticationResult = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         if (authenticationResult.isAuthenticated()) {
             UserDetails userDetails = (UserDetails) authenticationResult.getPrincipal();
             final CustomerEntity userEntity = userService.findByEmail(userDetails.getUsername());
             if (!userEntity.isActivated() || !userEntity.getStatus().equals(Status.ACTIVE.toString())) {
-                throw new UserActivationNeededException("Hesap aktif değil.");
+                throw new UserActivationNeededException();
             }
             final RoleType userRole = getUserRole(email);
             userEntity.setRole(userRole.value);
@@ -105,11 +105,11 @@ public class AuthenticationService {
             loginResponse.setUser(userResponse);
             return loginResponse;
         }
-        return null;
+        throw new BadCredentialsException("Incorrect Credentials");
     }
 
-    private RoleType getUserRole(String email){
-        if (email.equalsIgnoreCase(adminUser)){
+    private RoleType getUserRole(String email) {
+        if (email.equalsIgnoreCase(adminUser)) {
             return RoleType.ADMIN;
         }
         return RoleType.USER;
@@ -126,29 +126,9 @@ public class AuthenticationService {
         return activationResult;
     }
 
-    public boolean resetPassword(String token, String userEmail, String password, String rePassword) {
-        final boolean validationResult = mailValidationToken.validateToken(token, userEmail);
-        if (validationResult) {
-            if (!password.equals(rePassword)) {
-                return false;
-            } else {
-                final CustomerEntity userEntity = userService.findByEmail(userEmail);
-                userEntity.setPassword(bcryptEncoder.encode(password));
-                userService.save(userEntity);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void sendRegisterMail(String savingUserEmail) {
         final String activationToken = mailValidationToken.generateToken(userDetailService.loadUserByUsername(savingUserEmail), RoleType.USER);
         //registerMailSender.sendMail(savingUserEmail, activationToken);
-    }
-
-    public void sendPasswordResetMail(String userEmail) {
-        final String passwordResetTokenValue = this.passwordResetToken.generateToken(userDetailService.loadUserByUsername(userEmail), RoleType.USER);
-        //resetPasswordMailSender.sendMail(userEmail, passwordResetTokenValue);
     }
 
     private UserRegistrationResponse createUserResponse(CustomerEntity saveEntity) {
