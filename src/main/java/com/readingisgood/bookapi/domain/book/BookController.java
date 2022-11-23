@@ -2,6 +2,7 @@ package com.readingisgood.bookapi.domain.book;
 
 import com.readingisgood.bookapi.domain.book.model.*;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
+import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
@@ -27,16 +28,19 @@ public class BookController
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Object> getBook(@Valid @PathVariable(value = "id") UUID id) {
+    public Object getBook(@Valid @PathVariable(value = "id") UUID id) {
         try {
             final Optional<BookResponse> bookResponse = super.getById(id);
             log.info("message='getting book by id={}, user={}'", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
-        } catch (Exception exception) {
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            log.warn("message='book not found id={} .'", id);
+            throw resourceNotFoundException;
+        }
+        catch (Exception exception) {
             log.error("message='error has occurred while getting book by id.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+            throw exception;
         }
     }
 
@@ -49,8 +53,7 @@ public class BookController
             return ResponseEntity.ok().body(allBooks);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all books.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+            throw exception;
         }
     }
 
@@ -64,8 +67,7 @@ public class BookController
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating book.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+            throw exception;
         }
     }
 
@@ -80,8 +82,7 @@ public class BookController
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while updating book.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+            throw exception;
         }
     }
 
@@ -95,8 +96,7 @@ public class BookController
             return ResponseEntity.ok(true);
         } catch (Exception exception) {
             log.error("message='error has occurred while deleting book.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+            throw exception;
         }
     }
 }

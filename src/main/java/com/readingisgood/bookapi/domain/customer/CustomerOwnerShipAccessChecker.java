@@ -1,6 +1,6 @@
 package com.readingisgood.bookapi.domain.customer;
 
-import com.readingisgood.bookapi.domain.common.OwnerShipAccessChecker;
+import com.readingisgood.bookapi.domain.common.exception.OwnerShipAccessChecker;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import org.springframework.stereotype.Component;
 

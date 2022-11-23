@@ -5,6 +5,8 @@ import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
+import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
+import com.readingisgood.bookapi.security.SecurityContextUtil;
 import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class CustomerController
         extends AbstractController<CustomerEntity, CustomerRequest, CustomerResponse, UUID> {
 
+    public static final String DEFAULT_ERROR_MESSAGE = "Bir hata oluştu!";
     private final CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker;
 
     public CustomerController(BaseService<CustomerEntity, UUID> service,
@@ -37,11 +40,13 @@ public class CustomerController
     public ResponseEntity<Object> getCustomer(@PathVariable(value = "id") @Valid UUID id) {
         try {
             final Optional<CustomerResponse> customerResponse = super.getById(id);
+            log.info("message='getting customer by id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
         } catch (Exception exception) {
-            log.error("message='error has occurred while getting customer by id.'", exception);
+            log.error("message='error has occurred while getting customer by id={}.'", id, exception);
             return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
         }
     }
 
@@ -50,24 +55,29 @@ public class CustomerController
     public ResponseEntity<Object> getCustomers() {
         try {
             final List<CustomerResponse> allCustomers = super.getAll();
+            log.info("message='getting all customers, user={}'", SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(allCustomers);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all customers.'", exception);
             return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#customerRequest.id)")
+    @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#customerUpdateRequest.id)")
     @PutMapping("")
-    public ResponseEntity<Object> updateCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
+    public ResponseEntity<Object> updateCustomer(@Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
         try {
-            final Optional<CustomerResponse> customerResponse = super.update(customerRequest);
+            final Optional<CustomerResponse> customerResponse = super.update(CustomerMapper.INSTANCE
+                    .mapUpdateRequestToRequest(customerUpdateRequest));
+            log.info("message='customer was updated id={}, user={}'", customerUpdateRequest.getId(),
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
         } catch (Exception exception) {
-            log.error("message='error has occurred while getting all customers.'", exception);
+            log.error("message='error has occurred while updating customer, id={}.'", customerUpdateRequest.getId(),
+                    exception);
             return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
         }
     }
 
@@ -75,12 +85,14 @@ public class CustomerController
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable(value = "id") @Valid UUID id) {
         try {
-            //final Optional<CustomerResponse> customerResponse = super.update(customerRequest);
+            super.softDeleteById(id);
+            log.info("message=' customer by id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok(true);
         } catch (Exception exception) {
-            log.error("message='error has occurred while getting all customers.'", exception);
+            log.error("message='error has occurred while soft deleting customer by id={}.'", id, exception);
             return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage("Bir hata oluştu"));
+                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.readingisgood.bookapi.domain.common.controller;
 
+import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.common.jpa.auditing.AuditingUtil;
@@ -11,12 +12,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class AbstractController<Entity extends BaseEntity, Request extends BaseRequest, Response extends BaseResponse, ID>
+public class AbstractController<Entity extends BaseEntity,
+        Request extends BaseRequest, Response extends BaseResponse, ID>
         implements BaseController<Request, Response, ID> {
 
     private final BaseService<Entity, ID> service;
@@ -31,6 +34,9 @@ public class AbstractController<Entity extends BaseEntity, Request extends BaseR
     @Override
     public Optional<Response> getById(ID id) {
         final Optional<Entity> eventEntity = service.findActiveById(id);
+        if (eventEntity.isEmpty()){
+            throw new ResourceNotFoundException();
+        }
         return eventEntity.map(mapper::mapEntityToResponse);
     }
 
@@ -41,10 +47,15 @@ public class AbstractController<Entity extends BaseEntity, Request extends BaseR
 
     @Override
     public Optional<Response> update(Request request) {
-        Entity entity = mapper.mapRequestToEntity(request);
-        AuditingUtil.setUpdateAuditInfo(entity);
-        final Entity updatedEntity = service.save(entity);
-        return Optional.ofNullable(mapper.mapEntityToResponse(updatedEntity));
+        Optional<Entity> optionalEntity = this.service.findById((ID) request.getId());
+        if (optionalEntity.isEmpty()) {
+            throw new ResourceNotFoundException();
+        } else {
+            Entity entity = this.mapper.mapRequestToEntity(request, optionalEntity.get());
+            AuditingUtil.setUpdateAuditInfo(entity);
+            Entity updatedEntity = this.service.save(entity);
+            return Optional.ofNullable(this.mapper.mapEntityToResponse(updatedEntity));
+        }
     }
 
     @Override
@@ -68,20 +79,11 @@ public class AbstractController<Entity extends BaseEntity, Request extends BaseR
             AuditingUtil.setDeleteAuditInfo(entity.get());
             service.save(entity.get());
         }
+        else{
+            throw new ResourceNotFoundException();
+        }
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 }
 
 

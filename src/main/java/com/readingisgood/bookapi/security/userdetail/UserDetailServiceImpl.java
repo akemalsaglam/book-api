@@ -24,7 +24,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         CustomerEntity user = userService.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
+            throw new UsernameNotFoundException("User not found: " + email);
         }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));

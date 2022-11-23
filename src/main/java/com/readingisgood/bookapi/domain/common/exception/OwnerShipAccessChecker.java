@@ -1,4 +1,4 @@
-package com.readingisgood.bookapi.domain.common;
+package com.readingisgood.bookapi.domain.common.exception;
 
 
 import java.util.UUID;

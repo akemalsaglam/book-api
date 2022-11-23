@@ -13,11 +13,34 @@ public interface CustomerMapper extends BaseMapper<CustomerEntity, CustomerReque
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
     @Named("mapEntityToResponse")
-    CustomerResponse mapEntityToResponse(CustomerEntity entity);
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    CustomerResponse mapEntityToResponse(CustomerEntity customerEntity);
 
     @Named("mapEntityToRequest")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    CustomerRequest mapEntityToRequest(CustomerEntity entity);
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    CustomerRequest mapEntityToRequest(CustomerEntity customerEntity);
+
+    @Named("mapEntityToRequest")
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    CustomerEntity mapRequestToEntity(CustomerRequest customerRequest, @MappingTarget CustomerEntity customerEntity);
+
+    @Named("mapRequestToEntity")
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    CustomerEntity mapRequestToEntity(CustomerRequest customerRequest);
+
+    @Named("mapUpdateRequestToRequest")
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    CustomerRequest mapUpdateRequestToRequest(CustomerUpdateRequest customerUpdateRequest);
 
     @IterableMapping(qualifiedByName = "mapEntityToResponse")
     @Named("mapEntityListToResponseList")
