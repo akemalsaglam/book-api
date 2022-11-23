@@ -6,16 +6,8 @@ import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.common.jpa.auditing.AuditingUtil;
 import com.readingisgood.bookapi.domain.common.mapper.BaseMapper;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class AbstractController<Entity extends BaseEntity,
@@ -32,9 +24,9 @@ public class AbstractController<Entity extends BaseEntity,
     }
 
     @Override
-    public Optional<Response> getById(ID id) {
+    public Optional<Response> getById(ID id) throws ResourceNotFoundException {
         final Optional<Entity> eventEntity = service.findActiveById(id);
-        if (eventEntity.isEmpty()){
+        if (eventEntity.isEmpty()) {
             throw new ResourceNotFoundException();
         }
         return eventEntity.map(mapper::mapEntityToResponse);
@@ -46,7 +38,7 @@ public class AbstractController<Entity extends BaseEntity,
     }
 
     @Override
-    public Optional<Response> update(Request request) {
+    public Optional<Response> update(Request request) throws ResourceNotFoundException {
         Optional<Entity> optionalEntity = this.service.findById((ID) request.getId());
         if (optionalEntity.isEmpty()) {
             throw new ResourceNotFoundException();
@@ -72,14 +64,13 @@ public class AbstractController<Entity extends BaseEntity,
     }
 
     @Override
-    public void softDeleteById(ID id) {
+    public void softDeleteById(ID id) throws ResourceNotFoundException {
         final Optional<Entity> entity = service.findById(id);
         if (entity.isPresent()) {
             entity.get().setStatus(Status.PASSIVE.toString());
             AuditingUtil.setDeleteAuditInfo(entity.get());
             service.save(entity.get());
-        }
-        else{
+        } else {
             throw new ResourceNotFoundException();
         }
     }
