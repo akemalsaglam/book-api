@@ -1,7 +1,14 @@
 package com.readingisgood.bookapi.domain.order;
 
+import com.readingisgood.bookapi.domain.book.BookEntity;
+import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
+import com.readingisgood.bookapi.domain.customer.CustomerService;
+import com.readingisgood.bookapi.domain.order.orderbook.OrderBookEntity;
+import com.readingisgood.bookapi.domain.order.orderbook.OrderBookRequest;
+import com.readingisgood.bookapi.domain.order.orderbook.OrderBookService;
+import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -11,7 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,8 +33,18 @@ import java.util.UUID;
 public class OrderController
         extends AbstractController<OrderEntity, OrderRequest, OrderResponse, UUID> {
 
-    public OrderController(OrderService orderService) {
+    private final BookService bookService;
+    private final CustomerService customerService;
+    private final OrderService orderService;
+    private final OrderBookService orderBookService;
+
+    public OrderController(OrderService orderService, BookService bookService,
+                           CustomerService customerService, OrderBookService orderBookService) {
         super(orderService, OrderMapper.INSTANCE);
+        this.orderService = orderService;
+        this.bookService = bookService;
+        this.customerService = customerService;
+        this.orderBookService = orderBookService;
     }
 
 
@@ -73,11 +93,26 @@ public class OrderController
             @ApiResponse(code = 401, message = "Don not have access.")
     })
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    @Transactional
     @PostMapping("")
-    public ResponseEntity<Object> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Object> createOrder(@Valid @RequestBody List<OrderBookRequest> request) {
         try {
-            final Optional<OrderResponse> orderResponse = super.insert(orderRequest);
-            return ResponseEntity.ok().body(orderResponse);
+            OrderEntity orderEntity = new OrderEntity();
+            List<OrderBookEntity> orderBookEntities = new ArrayList<>();
+            request.forEach(orderBookRequest -> {
+                final BookEntity bookEntity = bookService.findActiveById(orderBookRequest.getId()).get();
+                OrderBookEntity orderBookEntity = new OrderBookEntity();
+                orderBookEntity.setBook(bookEntity);
+                orderBookEntity.setQuantity(orderBookRequest.getQuantity());
+                orderBookEntity.setSalePrice(bookEntity.getAmount());
+                orderBookService.save(orderBookEntity);
+                orderBookEntities.add(orderBookEntity);
+            });
+            orderEntity.setOrderBooks(orderBookEntities);
+            orderEntity.setOrderTime(ZonedDateTime.now());
+            orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
+            orderService.save(orderEntity);
+            return ResponseEntity.ok().body(true);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating order.'", exception);
             throw exception;

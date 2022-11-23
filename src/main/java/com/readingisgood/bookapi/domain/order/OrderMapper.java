@@ -1,6 +1,8 @@
 package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.common.mapper.BaseMapper;
+import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
+import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -17,6 +19,12 @@ public interface OrderMapper extends BaseMapper<OrderEntity, OrderRequest, Order
     @Named("mapEntityToRequest")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     OrderRequest mapEntityToRequest(OrderEntity entity);
+
+    @Named("mapCreateRequestToRequest")
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    OrderRequest mapCreateRequestToRequest(OrderCreateRequest orderCreateRequest);
 
     @IterableMapping(qualifiedByName = "mapEntityToResponse")
     @Named("mapEntityListToResponseList")

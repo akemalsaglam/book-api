@@ -1,23 +1,31 @@
 package com.readingisgood.bookapi.domain.order;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.readingisgood.bookapi.domain.book.BookEntity;
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
+import com.readingisgood.bookapi.domain.order.orderbook.OrderBookEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Entity(name = "order")
+@Entity(name = "book_order")
 public class OrderEntity extends BaseEntity {
 
     @Id
@@ -26,14 +34,13 @@ public class OrderEntity extends BaseEntity {
     private UUID id = UUID.randomUUID();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id")
-    private BookEntity book;
-
-    private BigDecimal saleAmount;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_order_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<OrderBookEntity> orderBooks;
 
     private ZonedDateTime orderTime;
 

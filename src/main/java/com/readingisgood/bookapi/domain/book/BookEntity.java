@@ -2,15 +2,13 @@ package com.readingisgood.bookapi.domain.book;
 
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
+import com.readingisgood.bookapi.domain.order.OrderEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -37,6 +35,10 @@ public class BookEntity extends BaseEntity {
     private BigDecimal amount;
 
     private int stockCount;
+
+   @ManyToOne
+   @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private OrderEntity orderEntity;
 
     private String status = Status.ACTIVE.value;
 }

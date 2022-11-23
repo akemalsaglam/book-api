@@ -14,6 +14,5 @@ public class OrderResponse extends BaseResponse {
     private String name;
     private String author;
     private String isbn;
-    private BigDecimal amount;
     private int stockCount;
 }
