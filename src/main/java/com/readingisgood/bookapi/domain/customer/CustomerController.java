@@ -1,13 +1,16 @@
 package com.readingisgood.bookapi.domain.customer;
 
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
+import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
 import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
-import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +29,6 @@ import java.util.UUID;
 public class CustomerController
         extends AbstractController<CustomerEntity, CustomerRequest, CustomerResponse, UUID> {
 
-    public static final String DEFAULT_ERROR_MESSAGE = "Bir hata oluştu!";
     private final CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker;
 
     public CustomerController(BaseService<CustomerEntity, UUID> service,
@@ -35,6 +37,12 @@ public class CustomerController
         this.customerOwnerShipAccessChecker = customerOwnerShipAccessChecker;
     }
 
+    @ApiOperation(value = "Get a customer by id.", notes = "Returns a customer by id.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved.", response = CustomerResponse.class),
+            @ApiResponse(code = 404, message = "Customer not found."),
+            @ApiResponse(code = 401, message = "Don not have access.")
+    })
     @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#id)")
     @GetMapping("{id}")
     public ResponseEntity<Object> getCustomer(@PathVariable(value = "id") @Valid UUID id) {
@@ -43,13 +51,21 @@ public class CustomerController
             log.info("message='getting customer by id={}, user={}'", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            log.warn("message='customer not found id={} .'", id);
+            throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while getting customer by id={}.'", id, exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
+            throw exception;
         }
     }
 
+    @ApiOperation(value = "Get all customers.", notes = "Returns all customers.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved.", response = CustomerResponse.class,
+                    responseContainer = "List"),
+            @ApiResponse(code = 401, message = "Don not have access.")
+    })
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
     public ResponseEntity<Object> getCustomers() {
@@ -59,11 +75,15 @@ public class CustomerController
             return ResponseEntity.ok().body(allCustomers);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all customers.'", exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
+            throw exception;
         }
     }
 
+    @ApiOperation(value = "Update a customer by id.", notes = "Updates a customer.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update and return value.", response = CustomerResponse.class),
+            @ApiResponse(code = 401, message = "Don not have access.")
+    })
     @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#customerUpdateRequest.id)")
     @PutMapping("")
     public ResponseEntity<Object> updateCustomer(@Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
@@ -73,26 +93,36 @@ public class CustomerController
             log.info("message='customer was updated id={}, user={}'", customerUpdateRequest.getId(),
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            log.warn("message='customer not found id={} .'", customerUpdateRequest.getId());
+            throw resourceNotFoundException;
         } catch (Exception exception) {
-            log.error("message='error has occurred while updating customer, id={}.'", customerUpdateRequest.getId(),
+            log.error("message='error has occurred while updating customer, id={}.'",
+                    customerUpdateRequest.getId(),
                     exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
+            throw exception;
         }
     }
 
+    @ApiOperation(value = "Soft delete a customer by id.", notes = "Soft deletes a customer.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deletes customer and return value.", response = boolean.class),
+            @ApiResponse(code = 401, message = "Don not have access.")
+    })
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteCustomer(@PathVariable(value = "id") @Valid UUID id) {
         try {
             super.softDeleteById(id);
-            log.info("message=' customer by id={}, user={}'", id,
+            log.info("message='customer was deleted by id={}, user={}'", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok(true);
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            log.warn("message='customer not found id={} .'", id);
+            throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while soft deleting customer by id={}.'", id, exception);
-            return ResponseEntity.internalServerError()
-                    .body(new ServiceErrorMessage(DEFAULT_ERROR_MESSAGE));
+            throw exception;
         }
     }
 }

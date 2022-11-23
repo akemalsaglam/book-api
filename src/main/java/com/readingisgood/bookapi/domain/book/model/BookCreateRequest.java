@@ -2,6 +2,7 @@ package com.readingisgood.bookapi.domain.book.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.readingisgood.bookapi.domain.common.controller.BaseRequest;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,13 +21,16 @@ public class BookCreateRequest extends BaseRequest {
     private UUID id;
 
     @NotNull(message = "name is mandatory")
+    @ApiModelProperty(required = true)
     private String name;
 
     @NotNull(message = "author is mandatory")
+    @ApiModelProperty(required = true)
     private String author;
     private String isbn;
 
     @NotNull(message = "amount is mandatory")
+    @ApiModelProperty(required = true)
     private BigDecimal amount;
 
     private int stockCount;

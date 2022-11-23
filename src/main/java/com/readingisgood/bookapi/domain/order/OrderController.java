@@ -1,7 +1,6 @@
 package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
-import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ import java.util.UUID;
 public class OrderController
         extends AbstractController<OrderEntity, OrderRequest, OrderResponse, UUID> {
 
-    public OrderController(BaseService<OrderEntity, UUID> service) {
-        super(service, OrderMapper.INSTANCE);
+    public OrderController(OrderService orderService) {
+        super(orderService, OrderMapper.INSTANCE);
     }
 
 
