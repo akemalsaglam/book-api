@@ -52,7 +52,7 @@ public class CustomerController
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='customer not found id={} .'", id);
+            log.warn("message='customer not found.', id={}", id);
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while getting customer by id={}.'", id, exception);
@@ -71,7 +71,7 @@ public class CustomerController
     public ResponseEntity<Object> getCustomers() {
         try {
             final List<CustomerResponse> allCustomers = super.getAll();
-            log.info("message='getting all customers, user={}'", SecurityContextUtil.getUserEmailFromContext());
+            log.info("message='getting all customers.', user={}", SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(allCustomers);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all customers.'", exception);
@@ -90,11 +90,11 @@ public class CustomerController
         try {
             final Optional<CustomerResponse> customerResponse = super.update(CustomerMapper.INSTANCE
                     .mapUpdateRequestToRequest(customerUpdateRequest));
-            log.info("message='customer was updated id={}, user={}'", customerUpdateRequest.getId(),
+            log.info("message='customer was updated.', id={}, user={}", customerUpdateRequest.getId(),
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(customerResponse);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='customer not found id={} .'", customerUpdateRequest.getId());
+            log.warn("message='customer not found.', id={}", customerUpdateRequest.getId());
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while updating customer, id={}.'",
@@ -114,11 +114,11 @@ public class CustomerController
     public ResponseEntity<Object> deleteCustomer(@PathVariable(value = "id") @Valid UUID id) {
         try {
             super.softDeleteById(id);
-            log.info("message='customer was deleted by id={}, user={}'", id,
+            log.info("message='customer was deleted by id.', id={}, user={}", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok(true);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='customer not found id={} .'", id);
+            log.warn("message='customer not found.', id={}", id);
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while soft deleting customer by id={}.'", id, exception);

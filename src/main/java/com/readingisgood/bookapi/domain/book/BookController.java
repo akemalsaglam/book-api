@@ -42,7 +42,7 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='book not found id={} .'", id);
+            log.warn("message='book not found.', id={}", id);
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while getting book by id.'", exception);
@@ -60,7 +60,7 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
     public ResponseEntity<Object> getBooks() {
         try {
             final List<BookResponse> allBooks = super.getAll();
-            log.info("message='getting all books, user={}'", SecurityContextUtil.getUserEmailFromContext());
+            log.info("message='getting all books.', user={}", SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(allBooks);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all books.'", exception);
@@ -78,7 +78,7 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
         try {
             final Optional<BookResponse> bookResponse = super.insert(BookMapper.INSTANCE
                     .mapCreateRequestToRequest(bookCreateRequest));
-            log.info("message='book was created, id={}, user={}'", bookResponse.get().getId(),
+            log.info("message='book was created.', id={}, user={}", bookResponse.get().getId(),
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
@@ -98,11 +98,11 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
         try {
             final Optional<BookResponse> bookResponse = super.update(BookMapper.INSTANCE
                     .mapUpdateRequestToRequest(bookUpdateRequest));
-            log.info("message='book was updated, id={}, user={}'", bookResponse.get().getId(),
+            log.info("message='book was updated.', id={}, user={}", bookResponse.get().getId(),
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='book not found id={} .'", bookUpdateRequest.getId());
+            log.warn("message='book not found.', id={}", bookUpdateRequest.getId());
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while updating book.'", exception);
@@ -120,11 +120,11 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
     public ResponseEntity<Object> deleteBook(@Valid @PathVariable(value = "id") UUID id) {
         try {
             super.softDeleteById(id);
-            log.info("message='book was soft deleted, id={}, user={}'", id,
+            log.info("message='book was soft deleted.', id={}, user={}", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok(true);
         } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='book not found id={} .'", id);
+            log.warn("message='book not found.', id={}", id);
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while deleting book.'", exception);
