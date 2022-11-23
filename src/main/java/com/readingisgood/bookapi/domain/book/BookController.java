@@ -3,7 +3,7 @@ package com.readingisgood.bookapi.domain.book;
 import com.readingisgood.bookapi.domain.book.model.*;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
-import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
+import com.readingisgood.bookapi.security.SecurityContextUtil;
 import com.readingisgood.bookapi.security.authentication.ServiceErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +30,8 @@ public class BookController
     public ResponseEntity<Object> getBook(@Valid @PathVariable(value = "id") UUID id) {
         try {
             final Optional<BookResponse> bookResponse = super.getById(id);
+            log.info("message='getting book by id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting book by id.'", exception);
@@ -42,6 +44,8 @@ public class BookController
     public ResponseEntity<Object> getBooks() {
         try {
             final List<BookResponse> allBooks = super.getAll();
+            log.info("message='getting all books, user={}'",
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(allBooks);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all books.'", exception);
@@ -55,6 +59,8 @@ public class BookController
         try {
             final Optional<BookResponse> bookResponse = super.insert(BookMapper.INSTANCE
                     .mapCreateRequestToRequest(bookCreateRequest));
+            log.info("message='book was created, id={}, user={}'", bookResponse.get().getId(),
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating book.'", exception);
@@ -69,6 +75,8 @@ public class BookController
         try {
             final Optional<BookResponse> bookResponse = super.update(BookMapper.INSTANCE
                     .mapUpdateRequestToRequest(bookUpdateRequest));
+            log.info("message='book was updated, id={}, user={}'", bookResponse.get().getId(),
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(bookResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while updating book.'", exception);
@@ -82,6 +90,8 @@ public class BookController
     public ResponseEntity<Object> deleteBook(@Valid @PathVariable(value = "id") UUID id) {
         try {
             super.softDeleteById(id);
+            log.info("message='book was soft deleted, id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok(true);
         } catch (Exception exception) {
             log.error("message='error has occurred while deleting book.'", exception);
