@@ -12,14 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class AbstractControllerTest {
-
 
     @Mock
     BookService bookService;
@@ -39,7 +38,7 @@ class AbstractControllerTest {
         when(bookService.findActiveById(uuid)).thenReturn(Optional.of(bookEntity));
 
         final Optional<BookResponse> bookResponse = abstractController.getById(uuid);
-        Assertions.assertTrue(!bookResponse.isEmpty());
+        Assertions.assertFalse(bookResponse.isEmpty());
         Assertions.assertEquals("zqR82O", BookMapper.INSTANCE
                 .mapResponseToEntity(bookResponse.get()).getName());
     }
@@ -57,11 +56,54 @@ class AbstractControllerTest {
     }
 
     @Test
-    void getAll() {
+    void getAll_whenTryToGetExistingItem_ShouldReturnAllItems() {
+        BookEntity bookEntity1 = new BookEntity();
+        bookEntity1.setName("zqR82O");
+        BookEntity bookEntity2 = new BookEntity();
+        bookEntity2.setName("K29");
+        when(bookService.findAll()).thenReturn(Arrays.asList(bookEntity1, bookEntity2));
+
+        final List<BookResponse> bookResponse = abstractController.getAll();
+        Assertions.assertFalse(bookResponse.isEmpty());
+        Assertions.assertEquals(BookMapper.INSTANCE
+                        .mapEntityListToResponseList(Arrays.asList(bookEntity1, bookEntity2)).get(0).getName(),
+                bookResponse.get(0).getName());
     }
 
     @Test
-    void update() {
+    void getAll_whenNoItemExist_ShouldReturnEmpty() {
+        when(bookService.findAll()).thenReturn(Collections.emptyList());
+
+        final List<BookResponse> bookResponse = abstractController.getAll();
+        Assertions.assertTrue(bookResponse.isEmpty());
+    }
+
+    @Test
+    void update_whenTryToUpdateExistingItem_ShouldReturnUpdatedItem() {
+        final UUID bookId = UUID.randomUUID();
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setId(bookId);
+        bookRequest.setName("new name");
+
+        BookEntity existingEntity = new BookEntity();
+        existingEntity.setId(bookId);
+        existingEntity.setName("existing name");
+        when(bookService.findById(bookId)).thenReturn(Optional.of(existingEntity));
+        when(bookService.save(any())).thenReturn(BookMapper.INSTANCE.mapRequestToEntity(bookRequest, existingEntity));
+
+        final Optional<BookResponse> bookResponse = abstractController.update(bookRequest);
+        Assertions.assertEquals("new name", bookResponse.get().getName());
+    }
+
+    @Test
+    void update_whenTryToUpdateNonExistedItem_ShouldReturnResourceNotFoundException() {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            final UUID bookId = UUID.randomUUID();
+            BookRequest bookRequest = new BookRequest();
+            bookRequest.setId(bookId);
+            when(bookService.findById(bookId)).thenReturn(Optional.empty());
+            abstractController.update(bookRequest);
+        });
     }
 
     @Test
