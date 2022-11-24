@@ -22,12 +22,6 @@ public interface OrderBookMapper extends BaseMapper<OrderBookEntity, OrderBookRe
     @BeanMapping(
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
             nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-    OrderBookRequest mapEntityToRequest(OrderBookEntity customerEntity);
-
-    @Named("mapEntityToRequest")
-    @BeanMapping(
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     OrderBookEntity mapRequestToEntity(OrderBookRequest customerRequest, @MappingTarget OrderBookEntity customerEntity);
 
     @Named("mapRequestToEntity")

@@ -40,9 +40,4 @@ public class BaseDomainService<E extends BaseEntity, Id> implements BaseService<
         return repository.findByIdIsAndStatusIs(id, Status.ACTIVE.value);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void deleteById(Id id) {
-        repository.deleteById(id);
-    }
 }

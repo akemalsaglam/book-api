@@ -56,11 +56,6 @@ public class AbstractController<Entity extends BaseEntity,
     }
 
     @Override
-    public void deleteById(ID id) {
-        service.deleteById(id);
-    }
-
-    @Override
     public void softDeleteById(ID id) throws ResourceNotFoundException {
         final Optional<Entity> entity = service.findById(id);
         if (entity.isPresent()) {

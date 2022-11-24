@@ -13,6 +13,4 @@ public interface BaseService<Entity, ID> {
 
     Optional<Entity> findActiveById(ID id);
 
-    void deleteById(ID id);
-
 }

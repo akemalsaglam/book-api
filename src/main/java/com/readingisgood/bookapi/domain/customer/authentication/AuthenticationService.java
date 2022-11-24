@@ -7,12 +7,10 @@ import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
 import com.readingisgood.bookapi.security.RoleType;
 import com.readingisgood.bookapi.security.accesstoken.impl.AccessToken;
-import com.readingisgood.bookapi.security.accesstoken.impl.MailValidationToken;
 import com.readingisgood.bookapi.domain.common.exception.UserActivationNeededException;
 import com.readingisgood.bookapi.domain.customer.authentication.model.LoginResponse;
 import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationRequest;
 import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationResponse;
-import com.readingisgood.bookapi.security.userdetail.UserDetailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -87,7 +85,7 @@ public class AuthenticationService {
         userEntity.setRole(RoleType.USER.value);
 
         /**
-         * marked it as true but we can set it to false for initial step,
+         * marked it as true, but we can set it to false for initial step,
          * then we can try to send activation mail to user e-mail adress in order to validate user mail.
          **/
         userEntity.setActivated(true);

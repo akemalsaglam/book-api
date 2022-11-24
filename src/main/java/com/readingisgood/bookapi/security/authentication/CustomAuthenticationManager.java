@@ -19,15 +19,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     private final PasswordEncoder bcryptEncoder;
 
     @Autowired
-    public CustomAuthenticationManager(
-            UserDetailServiceImpl userDetailService, PasswordEncoder bcryptEncoder) {
+    public CustomAuthenticationManager(UserDetailServiceImpl userDetailService, PasswordEncoder bcryptEncoder) {
         this.userDetailService = userDetailService;
         this.bcryptEncoder = bcryptEncoder;
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String providedUsername = authentication.getPrincipal().toString();
         UserDetails user = this.userDetailService.loadUserByUsername(providedUsername);
 
@@ -37,7 +35,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         if (!bcryptEncoder.matches(providedPassword, hashedPassword))
             throw new BadCredentialsException(DEFAULT_BAD_CREDENTIAL_ERROR_MESSAGE);
 
-        return new UsernamePasswordAuthenticationToken(
-                user, authentication.getCredentials(), user.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(user, authentication.getCredentials(), user.getAuthorities());
     }
 }

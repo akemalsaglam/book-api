@@ -42,12 +42,6 @@ public interface BookMapper extends BaseMapper<BookEntity, BookRequest, BookResp
             nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     BookEntity mapRequestToEntity(BookRequest bookRequest, @MappingTarget BookEntity bookEntity);
 
-    @Named("mapEntityToRequest")
-    @BeanMapping(
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-    BookRequest mapEntityToRequest(BookEntity bookEntity);
-
     @IterableMapping(qualifiedByName = "mapEntityToResponse")
     @Named("mapEntityListToResponseList")
     List<BookResponse> mapEntityListToResponseList(List<BookEntity> entity);

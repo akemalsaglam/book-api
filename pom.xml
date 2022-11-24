@@ -128,7 +128,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>com.davetino.api.DavetinoApiApplication</mainClass>
+                            <mainClass>com.readingisgood.bookapi.BookApiApplication</mainClass>
                         </configuration>
                     </execution>
                 </executions>

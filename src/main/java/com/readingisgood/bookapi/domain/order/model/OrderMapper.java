@@ -15,16 +15,6 @@ public interface OrderMapper extends BaseMapper<OrderEntity, OrderRequest, Order
     @Named("mapEntityToResponse")
     OrderResponse mapEntityToResponse(OrderEntity entity);
 
-    @Named("mapEntityToRequest")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    OrderRequest mapEntityToRequest(OrderEntity entity);
-
-    @Named("mapCreateRequestToRequest")
-    @BeanMapping(
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-    OrderRequest mapCreateRequestToRequest(OrderCreateRequest orderCreateRequest);
-
     @IterableMapping(qualifiedByName = "mapEntityToResponse")
     @Named("mapEntityListToResponseList")
     List<OrderResponse> mapEntityListToResponseList(List<OrderEntity> entity);

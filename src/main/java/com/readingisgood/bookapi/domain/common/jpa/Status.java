@@ -3,8 +3,7 @@ package com.readingisgood.bookapi.domain.common.jpa;
 public enum Status {
 
     ACTIVE("ACTIVE"),
-    PASSIVE("PASSIVE"),
-    BLOCK("BLOCK");
+    PASSIVE("PASSIVE");
 
     public final String value;
 

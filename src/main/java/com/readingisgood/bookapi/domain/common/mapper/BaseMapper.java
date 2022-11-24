@@ -13,11 +13,8 @@ public interface BaseMapper<Entity, Request extends BaseRequest, Response extend
 
     List<Response> mapEntityListToResponseList(List<Entity> entity);
 
-    Request mapEntityToRequest(Entity entity);
-
     Entity mapRequestToEntity(Request request);
 
     Entity mapRequestToEntity(Request request, @MappingTarget Entity entity);
 
-    List<Entity> mapRequestListToEntitylist(List<Request> request);
 }
