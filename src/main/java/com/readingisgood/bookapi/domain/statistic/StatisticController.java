@@ -1,5 +1,6 @@
 package com.readingisgood.bookapi.domain.statistic;
 
+import com.readingisgood.bookapi.security.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,10 +32,10 @@ public class StatisticController {
     @GetMapping("customers/{id}")
     public ResponseEntity<Object> getMonthlyStatistics(@PathVariable(value = "id") @Valid UUID customerId) {
         try {
-            final List<Integer> monthlyTotalOrderCount = statisticService.getMonthlyTotalOrderCount(customerId.toString());
-            final List<Integer> monthlyTotalOrderedBookCount = statisticService.getMonthlyTotalOrderedBookCount(customerId.toString());
-            final List<Integer> monthlyTotalPurchasedAmount = statisticService.getMonthlyTotalPurchasedAmount(customerId.toString());
-            return ResponseEntity.ok().body(true);
+            List<StatisticResponse> statisticResponses = statisticService.getStatistics(customerId);
+            log.info("message='getting statistics by user.', userId={}, user={}"
+                    , customerId, SecurityContextUtil.getUserEmailFromContext());
+            return ResponseEntity.ok().body(statisticResponses);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting monthly orders statistics by customerId.'"
                     , exception);
