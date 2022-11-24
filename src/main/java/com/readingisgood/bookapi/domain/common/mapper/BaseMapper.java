@@ -15,6 +15,8 @@ public interface BaseMapper<Entity, Request extends BaseRequest, Response extend
 
     Entity mapRequestToEntity(Request request);
 
+    Entity mapResponseToEntity(Response response);
+
     Entity mapRequestToEntity(Request request, @MappingTarget Entity entity);
 
 }

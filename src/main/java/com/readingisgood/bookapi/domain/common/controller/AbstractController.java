@@ -24,6 +24,7 @@ public class AbstractController<Entity extends BaseEntity,
 
     @Override
     public Optional<Response> getById(ID id) throws ResourceNotFoundException {
+        if (id == null) throw new ResourceNotFoundException();
         final Optional<Entity> eventEntity = service.findActiveById(id);
         if (eventEntity.isEmpty()) {
             throw new ResourceNotFoundException();
