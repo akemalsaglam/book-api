@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,24 +45,6 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while getting book by id.'", exception);
-            throw exception;
-        }
-    }
-
-    @ApiOperation(value = "Get all books.", notes = "Returns all books.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved.", response = BookResponse.class,
-                    responseContainer = "List"),
-            @ApiResponse(code = 401, message = "Don not have access.")
-    })
-    @GetMapping("")
-    public ResponseEntity<Object> getBooks() {
-        try {
-            final List<BookResponse> allBooks = super.getAll();
-            log.info("message='getting all books.', user={}", SecurityContextUtil.getUserEmailFromContext());
-            return ResponseEntity.ok().body(allBooks);
-        } catch (Exception exception) {
-            log.error("message='error has occurred while getting all books.'", exception);
             throw exception;
         }
     }

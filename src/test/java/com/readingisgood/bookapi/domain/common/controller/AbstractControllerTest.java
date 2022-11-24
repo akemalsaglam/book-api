@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -59,6 +60,10 @@ class AbstractControllerTest {
     void getAll_whenTryToGetExistingItem_ShouldReturnAllItems() {
         BookEntity bookEntity1 = new BookEntity();
         bookEntity1.setName("zqR82O");
+        bookEntity1.setIsbn("Re1u67x");
+        bookEntity1.setAuthor("I322WR8Q");
+        bookEntity1.setStockCount(10);
+        bookEntity1.setAmount(BigDecimal.valueOf(100.0));
         BookEntity bookEntity2 = new BookEntity();
         bookEntity2.setName("K29");
         when(bookService.findAll()).thenReturn(Arrays.asList(bookEntity1, bookEntity2));
@@ -84,6 +89,10 @@ class AbstractControllerTest {
         BookRequest bookRequest = new BookRequest();
         bookRequest.setId(bookId);
         bookRequest.setName("new name");
+        bookRequest.setIsbn("Re1u67x");
+        bookRequest.setAuthor("I322WR8Q");
+        bookRequest.setStockCount(10);
+        bookRequest.setAmount(BigDecimal.valueOf(100.0));
 
         BookEntity existingEntity = new BookEntity();
         existingEntity.setId(bookId);
@@ -107,10 +116,20 @@ class AbstractControllerTest {
     }
 
     @Test
-    void insert() {
+    void insert_ShouldReturnUpdatedItem() {
+        final UUID bookId = UUID.randomUUID();
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setId(bookId);
+        bookRequest.setName("new name");
+        bookRequest.setIsbn("Re1u67x");
+        bookRequest.setAuthor("I322WR8Q");
+        bookRequest.setStockCount(10);
+        bookRequest.setAmount(BigDecimal.valueOf(100.0));
+
+        when(bookService.save(any())).thenReturn(BookMapper.INSTANCE.mapRequestToEntity(bookRequest));
+
+        final Optional<BookResponse> bookResponse = abstractController.insert(bookRequest);
+        Assertions.assertEquals("new name", bookResponse.get().getName());
     }
 
-    @Test
-    void softDeleteById() {
-    }
 }
