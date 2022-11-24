@@ -26,7 +26,7 @@ public class BaseDomainService<E extends BaseEntity, Id> implements BaseService<
     @SuppressWarnings("unchecked")
     @Override
     public List<E> findAll() {
-        return repository.findAll();
+        return (List<E>) repository.findAll();
     }
 
     @SuppressWarnings("unchecked")

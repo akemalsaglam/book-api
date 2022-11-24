@@ -141,13 +141,15 @@ public class CustomerController
     })
     @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#id)")
     @GetMapping("{id}/orders/")
-    public ResponseEntity<Object> getCustomersOrders(@PathVariable(value = "id") @Valid UUID id) {
+    public ResponseEntity<Object> getCustomersOrders(@PathVariable(value = "id") @Valid UUID id,
+                                                     @RequestParam("page") int page,
+                                                     @RequestParam("size") int size) {
         try {
             final CustomerEntity customer = customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext());
             if (customer == null) {
                 throw new ResourceNotFoundException();
             }
-            final List<OrderEntity> orders = orderService.findAllByCustomer(customer);
+            final List<OrderEntity> orders = orderService.findAllByCustomer(customer, page, size);
             log.info("message='getting customer by id={}, user={}'", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(OrderMapper.INSTANCE.mapEntityListToResponseList(orders));
