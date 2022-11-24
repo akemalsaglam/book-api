@@ -105,7 +105,6 @@ public class OrderController
                 orderBookEntity.setBook(bookEntity);
                 orderBookEntity.setQuantity(orderBookRequest.getQuantity());
                 orderBookEntity.setSalePrice(bookEntity.getAmount());
-                orderBookService.save(orderBookEntity);
                 orderBookEntities.add(orderBookEntity);
             });
             orderEntity.setOrderBooks(orderBookEntities);

@@ -1,11 +1,13 @@
 package com.readingisgood.bookapi.domain.order;
 
-import com.readingisgood.bookapi.domain.book.model.BookResponse;
 import com.readingisgood.bookapi.domain.common.controller.BaseResponse;
+import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
+import com.readingisgood.bookapi.domain.orderbook.model.OrderBookResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,10 +15,10 @@ import java.util.UUID;
 public class OrderResponse extends BaseResponse {
     private UUID id;
 
-    private BookResponse book;
+    private CustomerResponse customer;
 
-    private int quantity;
+    private List<OrderBookResponse> orderBooks;
+    private ZonedDateTime orderTime;
 
-    private BigDecimal salePrice;
     private String status;
 }
