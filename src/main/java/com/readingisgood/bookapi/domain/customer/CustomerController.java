@@ -7,6 +7,9 @@ import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
 import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
+import com.readingisgood.bookapi.domain.order.OrderEntity;
+import com.readingisgood.bookapi.domain.order.OrderMapper;
+import com.readingisgood.bookapi.domain.order.OrderService;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -30,11 +33,16 @@ public class CustomerController
         extends AbstractController<CustomerEntity, CustomerRequest, CustomerResponse, UUID> {
 
     private final CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker;
+    private final OrderService orderService;
+    private final CustomerService customerService;
 
     public CustomerController(BaseService<CustomerEntity, UUID> service,
-                              CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker) {
+                              CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker,
+                              OrderService orderService, CustomerService customerService) {
         super(service, CustomerMapper.INSTANCE);
         this.customerOwnerShipAccessChecker = customerOwnerShipAccessChecker;
+        this.orderService = orderService;
+        this.customerService = customerService;
     }
 
     @ApiOperation(value = "Get a customer by id.", notes = "Returns a customer by id.")
@@ -122,6 +130,32 @@ public class CustomerController
             throw resourceNotFoundException;
         } catch (Exception exception) {
             log.error("message='error has occurred while soft deleting customer by id={}.'", id, exception);
+            throw exception;
+        }
+    }
+
+    @ApiOperation(value = "Get all orders of a customer.", notes = "Returns all orders of a customer.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved.", response = CustomerResponse.class),
+            @ApiResponse(code = 401, message = "Don not have access.")
+    })
+    @PreAuthorize("hasAuthority('ADMIN') or @customerOwnerShipAccessChecker.check(#id)")
+    @GetMapping("{id}/orders/")
+    public ResponseEntity<Object> getCustomersOrders(@PathVariable(value = "id") @Valid UUID id) {
+        try {
+            final CustomerEntity customer = customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext());
+            if (customer == null) {
+                throw new ResourceNotFoundException();
+            }
+            final List<OrderEntity> orders = orderService.findAllByCustomer(customer);
+            log.info("message='getting customer by id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
+            return ResponseEntity.ok().body(OrderMapper.INSTANCE.mapEntityListToResponseList(orders));
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            log.warn("message='customer not found.', id={}", id);
+            throw resourceNotFoundException;
+        } catch (Exception exception) {
+            log.error("message='error has occurred while getting customer by id={}.'", id, exception);
             throw exception;
         }
     }
