@@ -112,28 +112,6 @@ public class CustomerController
         }
     }
 
-    @ApiOperation(value = "Soft delete a customer by id.", notes = "Soft deletes a customer.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully deletes customer and return value.", response = boolean.class),
-            @ApiResponse(code = 401, message = "Don not have access.")
-    })
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteCustomer(@PathVariable(value = "id") @Valid UUID id) {
-        try {
-            super.softDeleteById(id);
-            log.info("message='customer was deleted by id.', id={}, user={}", id,
-                    SecurityContextUtil.getUserEmailFromContext());
-            return ResponseEntity.ok(true);
-        } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='customer not found.', id={}", id);
-            throw resourceNotFoundException;
-        } catch (Exception exception) {
-            log.error("message='error has occurred while soft deleting customer by id={}.'", id, exception);
-            throw exception;
-        }
-    }
-
     @ApiOperation(value = "Get all orders of a customer.", notes = "Returns all orders of a customer.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved.", response = CustomerResponse.class),

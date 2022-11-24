@@ -56,17 +56,6 @@ public class AbstractController<Entity extends BaseEntity,
         return Optional.ofNullable(mapper.mapEntityToResponse(insertedEntity));
     }
 
-    @Override
-    public void softDeleteById(ID id) throws ResourceNotFoundException {
-        final Optional<Entity> entity = service.findById(id);
-        if (entity.isPresent()) {
-            entity.get().setStatus(Status.PASSIVE.toString());
-            service.save(entity.get());
-        } else {
-            throw new ResourceNotFoundException();
-        }
-    }
-
 }
 
 

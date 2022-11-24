@@ -109,26 +109,4 @@ public class BookController extends AbstractController<BookEntity, BookRequest, 
             throw exception;
         }
     }
-
-    @ApiOperation(value = "Soft delete a book by id.", notes = "Soft deletes a book.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully deletes book and return value.", response = boolean.class),
-            @ApiResponse(code = 401, message = "Don not have access.")
-    })
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteBook(@Valid @PathVariable(value = "id") UUID id) {
-        try {
-            super.softDeleteById(id);
-            log.info("message='book was soft deleted.', id={}, user={}", id,
-                    SecurityContextUtil.getUserEmailFromContext());
-            return ResponseEntity.ok(true);
-        } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='book not found.', id={}", id);
-            throw resourceNotFoundException;
-        } catch (Exception exception) {
-            log.error("message='error has occurred while deleting book.'", exception);
-            throw exception;
-        }
-    }
 }
