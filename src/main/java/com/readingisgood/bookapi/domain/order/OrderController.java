@@ -5,9 +5,9 @@ import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
-import com.readingisgood.bookapi.domain.order.orderbook.OrderBookEntity;
-import com.readingisgood.bookapi.domain.order.orderbook.OrderBookRequest;
-import com.readingisgood.bookapi.domain.order.orderbook.OrderBookService;
+import com.readingisgood.bookapi.domain.orderbook.OrderBookEntity;
+import com.readingisgood.bookapi.domain.orderbook.OrderBookService;
+import com.readingisgood.bookapi.domain.orderbook.model.OrderBookRequest;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -111,8 +111,9 @@ public class OrderController
             orderEntity.setOrderBooks(orderBookEntities);
             orderEntity.setOrderTime(ZonedDateTime.now());
             orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
-            orderService.save(orderEntity);
-            return ResponseEntity.ok().body(true);
+            final OrderEntity savedOrderEntity = orderService.save(orderEntity);
+            final OrderResponse orderResponse = OrderMapper.INSTANCE.mapEntityToResponse(savedOrderEntity);
+            return ResponseEntity.ok().body(orderResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating order.'", exception);
             throw exception;

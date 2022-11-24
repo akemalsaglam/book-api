@@ -1,4 +1,4 @@
-package com.readingisgood.bookapi.domain.order.orderbook;
+package com.readingisgood.bookapi.domain.orderbook;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -1,11 +1,9 @@
 package com.readingisgood.bookapi.domain.order;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.readingisgood.bookapi.domain.book.BookEntity;
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
-import com.readingisgood.bookapi.domain.order.orderbook.OrderBookEntity;
+import com.readingisgood.bookapi.domain.orderbook.OrderBookEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,12 +12,8 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Data

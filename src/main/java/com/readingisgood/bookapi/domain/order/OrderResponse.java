@@ -1,5 +1,6 @@
 package com.readingisgood.bookapi.domain.order;
 
+import com.readingisgood.bookapi.domain.book.model.BookResponse;
 import com.readingisgood.bookapi.domain.common.controller.BaseResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,8 +12,11 @@ import java.util.UUID;
 @Data
 public class OrderResponse extends BaseResponse {
     private UUID id;
-    private String name;
-    private String author;
-    private String isbn;
-    private int stockCount;
+
+    private BookResponse book;
+
+    private int quantity;
+
+    private BigDecimal salePrice;
+    private String status;
 }
