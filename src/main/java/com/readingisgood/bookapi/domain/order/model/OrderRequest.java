@@ -5,7 +5,7 @@ import com.readingisgood.bookapi.domain.common.controller.BaseRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.ZonedDateTime;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,5 +13,5 @@ import java.util.UUID;
 public class OrderRequest extends BaseRequest {
     private UUID id;
     private BookRequest book;
-    private long orderTime;
+    private Timestamp orderTime;
 }

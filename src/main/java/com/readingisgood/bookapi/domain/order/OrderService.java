@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,8 +46,10 @@ public class OrderService extends BaseDomainService<OrderEntity, UUID> {
             orderBookEntity.setSalePrice(bookEntity.getAmount());
             orderBookEntities.add(orderBookEntity);
         });
+        final Timestamp orderTime = new Timestamp(System.currentTimeMillis());
+        orderEntity.setOrderTime(orderTime);
         orderEntity.setOrderBooks(orderBookEntities);
-        orderEntity.setOrderTime(System.currentTimeMillis());
+        orderEntity.setOrderTime(orderTime);
         orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
         return save(orderEntity);
     }
@@ -56,7 +59,7 @@ public class OrderService extends BaseDomainService<OrderEntity, UUID> {
         return orderRepository.findByCustomer(customerEntity, pageRequest);
     }
 
-    public List<OrderEntity> findAllByStarAndEndTime(long startTime, long endTime) {
+    public List<OrderEntity> findAllByStarAndEndTime(Timestamp startTime, Timestamp endTime) {
         return orderRepository.findAllByOrderTimeGreaterThanEqualAndAndOrderTimeLessThanEqual(startTime, endTime);
     }
 

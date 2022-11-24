@@ -12,6 +12,7 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class OrderEntity extends BaseEntity {
     @NotFound(action = NotFoundAction.IGNORE)
     private List<OrderBookEntity> orderBooks;
 
-    private long orderTime;
+    private Timestamp orderTime;
 
     private String status = Status.ACTIVE.value;
 }

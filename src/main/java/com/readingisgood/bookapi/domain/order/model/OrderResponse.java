@@ -6,6 +6,7 @@ import com.readingisgood.bookapi.domain.orderbook.model.OrderBookResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class OrderResponse extends BaseResponse {
     private CustomerResponse customer;
 
     private List<OrderBookResponse> orderBooks;
-    private long orderTime;
+    private Timestamp orderTime;
 
     private String status;
 }

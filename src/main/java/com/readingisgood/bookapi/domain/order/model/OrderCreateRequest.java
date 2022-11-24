@@ -6,7 +6,7 @@ import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.ZonedDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public class OrderCreateRequest extends BaseRequest {
     private UUID id;
 
     private List<BookRequest> books;
-    private long orderTime;
+    private Timestamp orderTime;
 
     private CustomerEntity customer;
 }

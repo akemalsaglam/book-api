@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -67,8 +68,8 @@ public class OrderController
     })
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
-    public ResponseEntity<Object> getOrders(@RequestParam("startTime") long startTime,
-                                            @RequestParam("endTime") long endTime) {
+    public ResponseEntity<Object> getOrders(@RequestParam("startTime") Timestamp startTime,
+                                            @RequestParam("endTime") Timestamp endTime) {
         try {
             final List<OrderEntity> orders = orderService.findAllByStarAndEndTime(startTime, endTime);
             final List<OrderResponse> orderResponses = OrderMapper.INSTANCE.mapEntityListToResponseList(orders);

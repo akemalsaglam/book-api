@@ -15,6 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
@@ -41,6 +42,7 @@ public class OrderBookEntity extends BaseEntity {
     @JoinColumn(name = "book_order_id", insertable = false, updatable = false)
     private OrderEntity order;
 
+    private Timestamp orderTime;
 
     private String status = Status.ACTIVE.value;
 }

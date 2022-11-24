@@ -5,6 +5,7 @@ import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,6 @@ import java.util.UUID;
 public interface OrderRepository extends BaseRepository<OrderEntity, UUID> {
 
     List<OrderEntity> findByCustomer(CustomerEntity customer, Pageable pageable);
-    List<OrderEntity> findAllByOrderTimeGreaterThanEqualAndAndOrderTimeLessThanEqual(long startTime, long endTime);
+    List<OrderEntity> findAllByOrderTimeGreaterThanEqualAndAndOrderTimeLessThanEqual(Timestamp startTime, Timestamp endTime);
 
 }
