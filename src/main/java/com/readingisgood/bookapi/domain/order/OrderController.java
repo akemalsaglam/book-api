@@ -58,6 +58,8 @@ public class OrderController
     public ResponseEntity<Object> getOrder(@PathVariable(value = "id") @Valid UUID id) {
         try {
             final Optional<OrderResponse> orderResponse = super.getById(id);
+            log.info("message='getting order by id={}, user={}'", id,
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(orderResponse);
         } catch (ResourceNotFoundException resourceNotFoundException) {
             log.warn("message='order not found id={} .'", id);
@@ -76,10 +78,14 @@ public class OrderController
     })
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
-    public ResponseEntity<Object> getOrders() {
+    public ResponseEntity<Object> getOrders(@RequestParam("startTime") long startTime,
+                                            @RequestParam("endTime") long endTime) {
         try {
-            final List<OrderResponse> allOrderResponses = super.getAll();
-            return ResponseEntity.ok().body(allOrderResponses);
+            final List<OrderEntity> orders = orderService.findAllByStarAndEndTime(startTime, endTime);
+            final List<OrderResponse> orderResponses = OrderMapper.INSTANCE.mapEntityListToResponseList(orders);
+            log.info("message='getting orders startTime and endTime, user={}'",
+                    SecurityContextUtil.getUserEmailFromContext());
+            return ResponseEntity.ok().body(orderResponses);
         } catch (Exception exception) {
             log.error("message='error has occurred while getting all orders.'", exception);
             throw exception;
@@ -111,6 +117,8 @@ public class OrderController
             orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
             final OrderEntity savedOrderEntity = orderService.save(orderEntity);
             final OrderResponse orderResponse = OrderMapper.INSTANCE.mapEntityToResponse(savedOrderEntity);
+            log.info("message='order was created, id={}, user={}'", orderResponse.getId(),
+                    SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(orderResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating order.'", exception);

@@ -26,5 +26,9 @@ public class OrderService extends BaseDomainService<OrderEntity, UUID> {
         return orderRepository.findByCustomer(customerEntity, pageRequest);
     }
 
+    public List<OrderEntity> findAllByStarAndEndTime(long startTime, long endTime) {
+        return orderRepository.findAllByOrderTimeGreaterThanEqualAndAndOrderTimeLessThanEqual(startTime, endTime);
+    }
+
 
 }

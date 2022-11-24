@@ -12,5 +12,6 @@ import java.util.UUID;
 public interface OrderRepository extends BaseRepository<OrderEntity, UUID> {
 
     List<OrderEntity> findByCustomer(CustomerEntity customer, Pageable pageable);
+    List<OrderEntity> findAllByOrderTimeGreaterThanEqualAndAndOrderTimeLessThanEqual(long startTime, long endTime);
 
 }
