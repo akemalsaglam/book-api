@@ -1,14 +1,10 @@
 package com.readingisgood.bookapi.domain.order;
 
-import com.readingisgood.bookapi.domain.book.BookEntity;
-import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
-import com.readingisgood.bookapi.domain.customer.CustomerService;
 import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.domain.order.model.OrderRequest;
 import com.readingisgood.bookapi.domain.order.model.OrderResponse;
-import com.readingisgood.bookapi.domain.orderbook.OrderBookEntity;
 import com.readingisgood.bookapi.domain.orderbook.model.OrderBookRequest;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,18 +29,12 @@ import java.util.UUID;
 public class OrderController
         extends AbstractController<OrderEntity, OrderRequest, OrderResponse, UUID> {
 
-    private final BookService bookService;
-    private final CustomerService customerService;
     private final OrderService orderService;
 
-    public OrderController(OrderService orderService, BookService bookService,
-                           CustomerService customerService) {
+    public OrderController(OrderService orderService) {
         super(orderService, OrderMapper.INSTANCE);
         this.orderService = orderService;
-        this.bookService = bookService;
-        this.customerService = customerService;
     }
-
 
     @ApiOperation(value = "Get an order by id.", notes = "Returns an order by id.")
     @ApiResponses(value = {
@@ -102,20 +91,7 @@ public class OrderController
     @PostMapping("")
     public ResponseEntity<Object> createOrder(@Valid @RequestBody List<OrderBookRequest> request) {
         try {
-            OrderEntity orderEntity = new OrderEntity();
-            List<OrderBookEntity> orderBookEntities = new ArrayList<>();
-            request.forEach(orderBookRequest -> {
-                final BookEntity bookEntity = bookService.findActiveById(orderBookRequest.getId()).get();
-                OrderBookEntity orderBookEntity = new OrderBookEntity();
-                orderBookEntity.setBook(bookEntity);
-                orderBookEntity.setQuantity(orderBookRequest.getQuantity());
-                orderBookEntity.setSalePrice(bookEntity.getAmount());
-                orderBookEntities.add(orderBookEntity);
-            });
-            orderEntity.setOrderBooks(orderBookEntities);
-            orderEntity.setOrderTime(System.currentTimeMillis());
-            orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
-            final OrderEntity savedOrderEntity = orderService.save(orderEntity);
+            final OrderEntity savedOrderEntity = orderService.createOrder(request);
             final OrderResponse orderResponse = OrderMapper.INSTANCE.mapEntityToResponse(savedOrderEntity);
             log.info("message='order was created, id={}, user={}'", orderResponse.getId(),
                     SecurityContextUtil.getUserEmailFromContext());
