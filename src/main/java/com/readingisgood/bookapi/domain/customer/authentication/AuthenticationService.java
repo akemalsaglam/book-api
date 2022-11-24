@@ -37,22 +37,15 @@ public class AuthenticationService {
 
     private final PasswordEncoder bcryptEncoder;
     private final CustomerService userService;
-    private final MailValidationToken mailValidationToken;
-
-    private final UserDetailService userDetailService;
     private final AccessToken accessJWTToken;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(PasswordEncoder bcryptEncoder,
                                  CustomerService userService,
-                                 MailValidationToken mailValidationToken,
-                                 UserDetailService userDetailService,
                                  AccessToken accessJWTToken,
                                  AuthenticationManager authenticationManager) {
         this.bcryptEncoder = bcryptEncoder;
         this.userService = userService;
-        this.mailValidationToken = mailValidationToken;
-        this.userDetailService = userDetailService;
         this.accessJWTToken = accessJWTToken;
         this.authenticationManager = authenticationManager;
     }
@@ -81,8 +74,37 @@ public class AuthenticationService {
     public UserRegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
         CustomerEntity userEntity = createUser(userRegistrationRequest);
         final CustomerEntity savedUserEntity = userService.save(userEntity);
-        UserRegistrationResponse userRegistrationResponse = createUserResponse(savedUserEntity);
-        sendRegisterMail(userRegistrationRequest.getEmail());
+        return createUserResponse(savedUserEntity);
+    }
+
+    private CustomerEntity createUser(UserRegistrationRequest userRegistrationRequest) {
+        CustomerEntity userEntity = new CustomerEntity();
+        userEntity.setName(userRegistrationRequest.getName());
+        userEntity.setSurname(userRegistrationRequest.getSurname());
+        userEntity.setEmail(userRegistrationRequest.getEmail());
+        userEntity.setAddress(userRegistrationRequest.getAddress());
+        userEntity.setBirthDate(userRegistrationRequest.getBirthDate());
+        userEntity.setRole(RoleType.USER.value);
+
+        /**
+         * marked it as true but we can set it to false for initial step,
+         * then we can try to send activation mail to user e-mail adress in order to validate user mail.
+         **/
+        userEntity.setActivated(true);
+        userEntity.setStatus(Status.ACTIVE.value);
+
+        userEntity.setPhone(userEntity.getPhone());
+        userEntity.setPassword(bcryptEncoder.encode(userRegistrationRequest.getPassword()));
+        return userEntity;
+    }
+
+    private UserRegistrationResponse createUserResponse(CustomerEntity saveEntity) {
+        UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
+        userRegistrationResponse.setName(saveEntity.getName());
+        userRegistrationResponse.setSurname(saveEntity.getSurname());
+        userRegistrationResponse.setEmail(saveEntity.getEmail());
+        userRegistrationResponse.setBirthDate(saveEntity.getBirthDate());
+        userRegistrationResponse.setRole(saveEntity.getRole());
         return userRegistrationResponse;
     }
 
@@ -113,45 +135,5 @@ public class AuthenticationService {
             return RoleType.ADMIN;
         }
         return RoleType.USER;
-    }
-
-    public boolean activateAccount(String token, String userEmail) {
-        final boolean activationResult = mailValidationToken.validateToken(token, userEmail);
-        if (activationResult) {
-            CustomerEntity userEntity = userService.findByEmail(userEmail);
-            userEntity.setActivated(true);
-            userEntity.setStatus(Status.ACTIVE.value);
-            userService.save(userEntity);
-        }
-        return activationResult;
-    }
-
-    private void sendRegisterMail(String savingUserEmail) {
-        final String activationToken = mailValidationToken.generateToken(userDetailService.loadUserByUsername(savingUserEmail), RoleType.USER);
-        //registerMailSender.sendMail(savingUserEmail, activationToken);
-    }
-
-    private UserRegistrationResponse createUserResponse(CustomerEntity saveEntity) {
-        UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
-        userRegistrationResponse.setName(saveEntity.getName());
-        userRegistrationResponse.setSurname(saveEntity.getSurname());
-        userRegistrationResponse.setEmail(saveEntity.getEmail());
-        userRegistrationResponse.setBirthDate(saveEntity.getBirthDate());
-        userRegistrationResponse.setRole(saveEntity.getRole());
-        return userRegistrationResponse;
-    }
-
-    private CustomerEntity createUser(UserRegistrationRequest userRegistrationRequest) {
-        CustomerEntity userEntity = new CustomerEntity();
-        userEntity.setName(userRegistrationRequest.getName());
-        userEntity.setSurname(userRegistrationRequest.getSurname());
-        userEntity.setEmail(userRegistrationRequest.getEmail());
-        userEntity.setAddress(userRegistrationRequest.getAddress());
-        userEntity.setBirthDate(userRegistrationRequest.getBirthDate());
-        userEntity.setRole(RoleType.USER.value);
-        userEntity.setActivated(false);
-        userEntity.setPhone(userEntity.getPhone());
-        userEntity.setPassword(bcryptEncoder.encode(userRegistrationRequest.getPassword()));
-        return userEntity;
     }
 }

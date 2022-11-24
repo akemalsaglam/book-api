@@ -27,7 +27,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         String error = ex.getMessage();
         ApiError apiError =
-                new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Bir hata oluştu", error);
+                new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Exception occurred.", error);
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
