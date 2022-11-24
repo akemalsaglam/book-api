@@ -5,8 +5,10 @@ import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
+import com.readingisgood.bookapi.domain.order.model.OrderMapper;
+import com.readingisgood.bookapi.domain.order.model.OrderRequest;
+import com.readingisgood.bookapi.domain.order.model.OrderResponse;
 import com.readingisgood.bookapi.domain.orderbook.OrderBookEntity;
-import com.readingisgood.bookapi.domain.orderbook.OrderBookService;
 import com.readingisgood.bookapi.domain.orderbook.model.OrderBookRequest;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,15 +37,13 @@ public class OrderController
     private final BookService bookService;
     private final CustomerService customerService;
     private final OrderService orderService;
-    private final OrderBookService orderBookService;
 
     public OrderController(OrderService orderService, BookService bookService,
-                           CustomerService customerService, OrderBookService orderBookService) {
+                           CustomerService customerService) {
         super(orderService, OrderMapper.INSTANCE);
         this.orderService = orderService;
         this.bookService = bookService;
         this.customerService = customerService;
-        this.orderBookService = orderBookService;
     }
 
 
@@ -108,33 +107,13 @@ public class OrderController
                 orderBookEntities.add(orderBookEntity);
             });
             orderEntity.setOrderBooks(orderBookEntities);
-            orderEntity.setOrderTime(ZonedDateTime.now());
+            orderEntity.setOrderTime(System.currentTimeMillis());
             orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
             final OrderEntity savedOrderEntity = orderService.save(orderEntity);
             final OrderResponse orderResponse = OrderMapper.INSTANCE.mapEntityToResponse(savedOrderEntity);
             return ResponseEntity.ok().body(orderResponse);
         } catch (Exception exception) {
             log.error("message='error has occurred while creating order.'", exception);
-            throw exception;
-        }
-    }
-
-    @ApiOperation(value = "Update an order by id.", notes = "Updates an order.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully update and return value.", response = OrderResponse.class),
-            @ApiResponse(code = 401, message = "Don not have access.")
-    })
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("")
-    public ResponseEntity<Object> updateOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        try {
-            final Optional<OrderResponse> orderResponse = super.update(orderRequest);
-            return ResponseEntity.ok().body(orderResponse);
-        } catch (ResourceNotFoundException resourceNotFoundException) {
-            log.warn("message='order not found id={} .'", orderRequest.getId());
-            throw resourceNotFoundException;
-        } catch (Exception exception) {
-            log.error("message='error has occurred while updating order.'", exception);
             throw exception;
         }
     }

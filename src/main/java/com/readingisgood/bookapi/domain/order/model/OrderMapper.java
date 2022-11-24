@@ -1,8 +1,7 @@
-package com.readingisgood.bookapi.domain.order;
+package com.readingisgood.bookapi.domain.order.model;
 
 import com.readingisgood.bookapi.domain.common.mapper.BaseMapper;
-import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
-import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
+import com.readingisgood.bookapi.domain.order.OrderEntity;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

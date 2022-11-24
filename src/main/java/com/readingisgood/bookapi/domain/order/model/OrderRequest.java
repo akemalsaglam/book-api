@@ -1,4 +1,4 @@
-package com.readingisgood.bookapi.domain.order;
+package com.readingisgood.bookapi.domain.order.model;
 
 import com.readingisgood.bookapi.domain.book.model.BookRequest;
 import com.readingisgood.bookapi.domain.common.controller.BaseRequest;
@@ -13,5 +13,5 @@ import java.util.UUID;
 public class OrderRequest extends BaseRequest {
     private UUID id;
     private BookRequest book;
-    private ZonedDateTime orderTime;
+    private long orderTime;
 }

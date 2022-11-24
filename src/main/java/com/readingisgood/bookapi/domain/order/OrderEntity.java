@@ -36,7 +36,7 @@ public class OrderEntity extends BaseEntity {
     @NotFound(action = NotFoundAction.IGNORE)
     private List<OrderBookEntity> orderBooks;
 
-    private ZonedDateTime orderTime;
+    private long orderTime;
 
     private String status = Status.ACTIVE.value;
 }

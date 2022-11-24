@@ -8,7 +8,7 @@ import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
 import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
 import com.readingisgood.bookapi.domain.order.OrderEntity;
-import com.readingisgood.bookapi.domain.order.OrderMapper;
+import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.domain.order.OrderService;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
@@ -150,7 +150,7 @@ public class CustomerController
                 throw new ResourceNotFoundException();
             }
             final List<OrderEntity> orders = orderService.findAllByCustomer(customer, page, size);
-            log.info("message='getting customer by id={}, user={}'", id,
+            log.info("message='getting customers order by userid={}, user={}'", id,
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(OrderMapper.INSTANCE.mapEntityListToResponseList(orders));
         } catch (ResourceNotFoundException resourceNotFoundException) {
