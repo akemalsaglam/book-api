@@ -59,3 +59,9 @@ OwnerShipAccessChecker is used to allow updates to specific resources for only i
 
 # Api Test
 I have put sample postman requests in postman directory, you can import it and test requests.
+
+
+# Code Coverage
+Jacoco was used to report code coverage. Please follow below path to open coverage repor:
+
+`./target/site/index.html`
