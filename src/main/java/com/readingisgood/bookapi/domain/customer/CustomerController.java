@@ -2,7 +2,6 @@ package com.readingisgood.bookapi.domain.customer;
 
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
-import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
@@ -34,10 +33,10 @@ public class CustomerController
     private final OrderService orderService;
     private final CustomerService customerService;
 
-    public CustomerController(BaseService<CustomerEntity, UUID> service,
-                              CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker,
-                              OrderService orderService, CustomerService customerService) {
-        super(service, CustomerMapper.INSTANCE);
+    public CustomerController(CustomerOwnerShipAccessChecker customerOwnerShipAccessChecker,
+                              OrderService orderService,
+                              CustomerService customerService) {
+        super(customerService, CustomerMapper.INSTANCE);
         this.customerOwnerShipAccessChecker = customerOwnerShipAccessChecker;
         this.orderService = orderService;
         this.customerService = customerService;

@@ -1,10 +1,10 @@
 package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.book.BookEntity;
-import com.readingisgood.bookapi.domain.book.BookRepository;
 import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
+import com.readingisgood.bookapi.domain.common.exception.StockOutException;
 import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
@@ -13,22 +13,26 @@ import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.domain.order.model.OrderResponse;
 import com.readingisgood.bookapi.domain.orderbook.OrderBookEntity;
 import com.readingisgood.bookapi.domain.orderbook.model.OrderBookMapper;
+import com.readingisgood.bookapi.domain.orderbook.model.OrderBookRequest;
 import com.readingisgood.bookapi.security.RoleType;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 class OrderControllerTest {
 
@@ -54,7 +58,7 @@ class OrderControllerTest {
 
     @BeforeEach
     void init() {
-        orderService = new OrderService(mock(OrderRepository.class), mock(BookService.class), mock(CustomerService.class));
+        MockitoAnnotations.initMocks(this);
         abstractController = mock(AbstractController.class);
         orderController = new OrderController(orderService);
     }
@@ -103,5 +107,44 @@ class OrderControllerTest {
         when(orderService.findActiveById(orderId)).thenReturn(Optional.empty());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> orderController.getOrder(orderId));
     }
+
+    @Test
+    void getOrders_ShouldReturnOrderResponse() {
+        when(orderService.findAllByStarAndEndTime(any(), any())).thenReturn(Arrays.asList(new OrderEntity()));
+        final ResponseEntity<Object> orderResponseEntity = orderController.getOrders(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
+        Assertions.assertEquals(1, ((List<OrderResponse>) orderResponseEntity.getBody()).size());
+    }
+
+    @Test
+    void createOrder_ShouldReturnOrderResponse() {
+        OrderBookRequest orderBookRequest = new OrderBookRequest();
+        orderBookRequest.setQuantity(1);
+        when(orderService.createOrder(any())).thenReturn(new OrderEntity());
+        final ResponseEntity<Object> orderResponseEntity = orderController.createOrder(Arrays.asList(orderBookRequest));
+        Assertions.assertEquals(Status.ACTIVE.value, ((OrderResponse) orderResponseEntity.getBody()).getStatus());
+    }
+
+    @Test
+    void createOrder_whenTryStockOutBook_ShouldReturnStockOutException() {
+        OrderBookRequest orderBookRequest = new OrderBookRequest();
+        orderBookRequest.setQuantity(1);
+
+        doThrow(StockOutException.class)
+                .when(orderService)
+                .createOrder(any());
+        Assertions.assertThrows(StockOutException.class, () -> orderController.createOrder(Arrays.asList(orderBookRequest)));
+    }
+
+    @Test
+    void createOrder_whenTryNotExistingBook_ShouldReturnResourceNotFoundException() {
+        OrderBookRequest orderBookRequest = new OrderBookRequest();
+        orderBookRequest.setQuantity(1);
+
+        doThrow(ResourceNotFoundException.class)
+                .when(orderService)
+                .createOrder(any());
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> orderController.createOrder(Arrays.asList(orderBookRequest)));
+    }
+
 
 }

@@ -13,7 +13,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 

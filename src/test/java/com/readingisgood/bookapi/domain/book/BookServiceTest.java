@@ -22,9 +22,6 @@ class BookServiceTest {
 
     private BookService bookService;
 
-    @Mock
-    private BaseDomainService baseDomainService;
-
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);

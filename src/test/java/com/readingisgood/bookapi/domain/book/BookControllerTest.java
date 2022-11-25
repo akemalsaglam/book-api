@@ -1,10 +1,6 @@
 package com.readingisgood.bookapi.domain.book;
 
-import com.readingisgood.bookapi.domain.book.model.BookCreateRequest;
-import com.readingisgood.bookapi.domain.book.model.BookMapper;
-import com.readingisgood.bookapi.domain.book.model.BookRequest;
-import com.readingisgood.bookapi.domain.book.model.BookResponse;
-import com.readingisgood.bookapi.domain.common.controller.AbstractController;
+import com.readingisgood.bookapi.domain.book.model.*;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import org.junit.jupiter.api.*;
@@ -25,7 +21,6 @@ class BookControllerTest {
     @Mock
     BookService bookService;
 
-    AbstractController abstractController;
 
     BookController bookController;
 
@@ -45,7 +40,6 @@ class BookControllerTest {
     @BeforeEach
     void init() {
         bookService = new BookService(mock(BookRepository.class));
-        abstractController = mock(AbstractController.class);
         bookController = new BookController(bookService);
     }
 
@@ -69,9 +63,9 @@ class BookControllerTest {
     }
 
     @Test
-    void getBook_whenTryToInsertNewBook_ShouldReturnInsertedBook() {
+    void createBook_whenTryToInsertNewBook_ShouldReturnInsertedBook() {
         final UUID bookId = UUID.randomUUID();
-        BookCreateRequest bookCreateRequest=new BookCreateRequest();
+        BookCreateRequest bookCreateRequest = new BookCreateRequest();
         bookCreateRequest.setName("rEH9");
         bookCreateRequest.setId(bookId);
         bookCreateRequest.setIsbn("Ys3Dn");
@@ -82,6 +76,39 @@ class BookControllerTest {
         when(bookService.save(any())).thenReturn(bookEntity);
         final ResponseEntity<Object> bookResponse = bookController.createBook(bookCreateRequest);
         Assertions.assertEquals(bookId, ((Optional<BookResponse>) bookResponse.getBody()).get().getId());
+    }
+
+    @Test
+    void updateBook_whenTryToUpdateBook_ShouldReturnUpdatedBook() {
+        final UUID bookId = UUID.randomUUID();
+        BookUpdateRequest bookUpdateRequest = new BookUpdateRequest();
+        bookUpdateRequest.setName("rEH9");
+        bookUpdateRequest.setId(bookId);
+        bookUpdateRequest.setIsbn("Ys3Dn");
+
+        final BookEntity bookEntity = BookMapper.INSTANCE.mapRequestToEntity(
+                BookMapper.INSTANCE.mapUpdateRequestToRequest(bookUpdateRequest));
+
+        when(bookService.save(any())).thenReturn(bookEntity);
+        when(bookService.findById(any())).thenReturn(Optional.ofNullable(bookEntity));
+
+        final ResponseEntity<Object> bookResponse = bookController.updateBook(bookUpdateRequest);
+        Assertions.assertEquals(bookId, ((Optional<BookResponse>) bookResponse.getBody()).get().getId());
+    }
+
+
+    @Test
+    void updateBook_whenTryToUpdateNotExistedBook_ShouldReturnResourceNotFoundException() {
+        final UUID bookId = UUID.randomUUID();
+        BookUpdateRequest bookUpdateRequest = new BookUpdateRequest();
+        bookUpdateRequest.setName("rEH9");
+        bookUpdateRequest.setId(bookId);
+        bookUpdateRequest.setIsbn("Ys3Dn");
+
+        when(bookService.findById(any())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> bookController.updateBook(bookUpdateRequest));
     }
 
 
