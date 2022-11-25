@@ -33,4 +33,21 @@ Also you can start application via  below command on your local
 
 `java -jar book-api-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=test -Denvironment=test -Xms128m -Xmx512m -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:ParallelGCThreads=4 -XX:InitiatingHeapOccupancyPercent=70 -noverify -XX:TieredStopAtLevel=1 -web -webAllowOthers -tcp -tcpAllowOthers -browser`
 
-# Project Dependencies
+# Security
+jwt token was used to get access for authorized end points. Application supports 2 role type; USER, ADMIN.
+ADMIN user is automatically creating during the initialization of application.
+
+`api.security.admin_user=admin@readingisgood.com`
+
+`api.security.admin_password=admin12345`
+
+A customer can be registered by /register endpoint. By this way every user can only have USER role type.
+Three different authority check were applied to endpoints in application:
+
+`hasAuthority('ADMIN')`
+
+`hasAuthority('USER')`
+
+`@customerOwnerShipAccessChecker.check(#id)`
+
+OwnerShipAccessChecker is used to allow updates to specific resources for only it's owners.
