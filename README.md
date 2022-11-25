@@ -25,7 +25,7 @@ credentials:
 
 # How to run
 
-if you want to run application in docker, start_in_docker script will build project, create container and run it. it is enough to run below command:
+if you want to run application in docker, start_in_docker script will build project, it creates container and runs it. it is enough to run below command:
 
 `sh start_in_docker.sh`
 
@@ -41,7 +41,7 @@ ADMIN user is automatically creating during the initialization of application.
 
 `api.security.admin_password=admin12345`
 
-A customer can be registered by /register endpoint. By this way every user can only have USER role type.
+A customer can be registered by ".../register" endpoint. By this way every user can only have USER role type.
 Three different authority check were applied to endpoints in application:
 
 `hasAuthority('ADMIN')`
