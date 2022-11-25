@@ -43,6 +43,7 @@ public class BookService extends BaseDomainService<BookEntity, UUID> {
         }
         try {
             bookEntity.setStockCount(stockCount - orderedQuantity);
+            save(bookEntity);
         } catch (OptimisticLockException optimisticLockException) {
             log.warn("OptimisticLockException has occurred while updating book stock, bookId={}", bookId);
             updateStockCount(bookId, orderedQuantity);
