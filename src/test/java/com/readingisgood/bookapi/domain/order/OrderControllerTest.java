@@ -1,6 +1,7 @@
 package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.book.BookEntity;
+import com.readingisgood.bookapi.domain.book.BookRepository;
 import com.readingisgood.bookapi.domain.book.BookService;
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;

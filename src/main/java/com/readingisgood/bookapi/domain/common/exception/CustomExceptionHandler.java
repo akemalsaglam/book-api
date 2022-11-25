@@ -119,4 +119,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
+    @ExceptionHandler({StockOutException.class})
+    public ResponseEntity<Object> handleStockOutException(StockOutException ex, WebRequest request) {
+        String error = ex.getMessage();
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
 }

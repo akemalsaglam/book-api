@@ -2,6 +2,8 @@ package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.book.BookEntity;
 import com.readingisgood.bookapi.domain.book.BookService;
+import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
+import com.readingisgood.bookapi.domain.common.exception.StockOutException;
 import com.readingisgood.bookapi.domain.common.service.BaseDomainService;
 import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +38,22 @@ public class OrderService extends BaseDomainService<OrderEntity, UUID> {
         this.customerService = customerService;
     }
 
-    public OrderEntity createOrder(List<OrderBookRequest> request) {
+    @Transactional
+    public OrderEntity createOrder(List<OrderBookRequest> request) throws ResourceNotFoundException,
+            StockOutException {
+        request.forEach(orderBookRequest -> bookService.updateStockCount(orderBookRequest.getId(),
+                orderBookRequest.getQuantity()));
         OrderEntity orderEntity = new OrderEntity();
+        List<OrderBookEntity> orderBookEntities = mapOrderBookEntities(request);
+        final Timestamp orderTime = new Timestamp(System.currentTimeMillis());
+        orderEntity.setOrderTime(orderTime);
+        orderEntity.setOrderBooks(orderBookEntities);
+        orderEntity.setOrderTime(orderTime);
+        orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
+        return save(orderEntity);
+    }
+
+    private List<OrderBookEntity> mapOrderBookEntities(List<OrderBookRequest> request) {
         List<OrderBookEntity> orderBookEntities = new ArrayList<>();
         request.forEach(orderBookRequest -> {
             final BookEntity bookEntity = bookService.findActiveById(orderBookRequest.getId()).get();
@@ -46,12 +63,7 @@ public class OrderService extends BaseDomainService<OrderEntity, UUID> {
             orderBookEntity.setSalePrice(bookEntity.getAmount());
             orderBookEntities.add(orderBookEntity);
         });
-        final Timestamp orderTime = new Timestamp(System.currentTimeMillis());
-        orderEntity.setOrderTime(orderTime);
-        orderEntity.setOrderBooks(orderBookEntities);
-        orderEntity.setOrderTime(orderTime);
-        orderEntity.setCustomer(customerService.findByEmail(SecurityContextUtil.getUserEmailFromContext()));
-        return save(orderEntity);
+        return orderBookEntities;
     }
 
     public List<OrderEntity> findAllByCustomer(CustomerEntity customerEntity, int page, int size) {

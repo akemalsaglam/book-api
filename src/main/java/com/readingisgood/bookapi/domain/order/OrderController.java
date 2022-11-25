@@ -2,6 +2,7 @@ package com.readingisgood.bookapi.domain.order;
 
 import com.readingisgood.bookapi.domain.common.controller.AbstractController;
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
+import com.readingisgood.bookapi.domain.common.exception.StockOutException;
 import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.domain.order.model.OrderRequest;
 import com.readingisgood.bookapi.domain.order.model.OrderResponse;
@@ -97,6 +98,12 @@ public class OrderController
             log.info("message='order was created, id={}, user={}'", orderResponse.getId(),
                     SecurityContextUtil.getUserEmailFromContext());
             return ResponseEntity.ok().body(orderResponse);
+        } catch (ResourceNotFoundException exception) {
+            log.error("message='ordered book not found.'", exception);
+            throw exception;
+        } catch (StockOutException exception) {
+            log.error("message='ordered book out of stock.'", exception);
+            throw exception;
         } catch (Exception exception) {
             log.error("message='error has occurred while creating order.'", exception);
             throw exception;
