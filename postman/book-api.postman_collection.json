@@ -1,0 +1,250 @@
+{
+	"info": {
+		"_postman_id": "44e6c042-74cd-4970-a8d5-a39035ba6ecc",
+		"name": "book-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"admin@readingisgood.com\",\n    \"password\":\"admin12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/books/",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkByZWFkaW5naXNnb29kLmNvbSIsInNjb3BlcyI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sImlzcyI6Imh0dHBzOi8vcmVhZGluZ2lzZ29vZC5jb20iLCJpYXQiOjE2NjkyODcxNjMsImV4cCI6MTY3MDU4MzE2M30.tKA1bA0UOqCJPcSb1ZRnJqNyyu2MWC3fCVduJMHW2Bc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"6caaf142-b1d9-4d27-91df-3b4ded6df765\",\n    \"name\":\"deneme23\",\n    \"author\":\"deneme2wew\",\n    \"amount\":110.0,\n    \"stockCount\":3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/books/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/orders/",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkByZWFkaW5naXNnb29kLmNvbSIsInNjb3BlcyI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sImlzcyI6Imh0dHBzOi8vcmVhZGluZ2lzZ29vZC5jb20iLCJpYXQiOjE2NjkyOTAxMTEsImV4cCI6MTY3MDU4NjExMX0.nOB2vfT2917dxo4v-jqss0ONR5pRmrjaFZDMcelkOsI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"id\": \"ef68cac7-7e19-4e25-b0d1-471893255d3a\",\n        \"quantity\":2\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/orders/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"orders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/orders/?startTime",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkByZWFkaW5naXNnb29kLmNvbSIsInNjb3BlcyI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sImlzcyI6Imh0dHBzOi8vcmVhZGluZ2lzZ29vZC5jb20iLCJpYXQiOjE2NjkyOTQ1MDAsImV4cCI6MTY3MDU5MDUwMH0.f6GhUUAsP71aC89aNBZ7WCSL3nKXxIeNjlVJeyz5CY8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"99463e70-d712-419e-b9a3-1d2bb592e289\",\n    \"name\":\"admin2\",\n    \"surname\":\"admin\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/orders/?startTime=2022-11-24 17:24:46.883&endTime=2022-11-24 17:24:47.883",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"orders",
+						""
+					],
+					"query": [
+						{
+							"key": "startTime",
+							"value": "2022-11-24 17:24:46.883"
+						},
+						{
+							"key": "endTime",
+							"value": "2022-11-24 17:24:47.883"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"ali\",\n    \"surname\":\"sağlam\",\n    \"email\":\"ali@saglam.com\",\n    \"password\":\"12345\",\n    \"repassword\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/statistics/customers/",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkByZWFkaW5naXNnb29kLmNvbSIsInNjb3BlcyI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sImlzcyI6Imh0dHBzOi8vcmVhZGluZ2lzZ29vZC5jb20iLCJpYXQiOjE2NjkyOTQ1MDAsImV4cCI6MTY3MDU5MDUwMH0.f6GhUUAsP71aC89aNBZ7WCSL3nKXxIeNjlVJeyz5CY8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"99463e70-d712-419e-b9a3-1d2bb592e289\",\n    \"name\":\"admin2\",\n    \"surname\":\"admin\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/readingisgood-books/api/statistics/customers/e5396856-7f89-4b98-8aee-f9180ff41cbd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"readingisgood-books",
+						"api",
+						"statistics",
+						"customers",
+						"e5396856-7f89-4b98-8aee-f9180ff41cbd"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

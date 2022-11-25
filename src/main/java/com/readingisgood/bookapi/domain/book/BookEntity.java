@@ -36,8 +36,11 @@ public class BookEntity extends BaseEntity {
 
     private int stockCount;
 
-   @ManyToOne
-   @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @Version
+    private long version;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
     private OrderEntity orderEntity;
 
     private String status = Status.ACTIVE.value;
