@@ -34,7 +34,11 @@ Also you can start application via  below command on your local
 `java -jar book-api-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=test -Denvironment=test -Xms128m -Xmx512m -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication -XX:ParallelGCThreads=4 -XX:InitiatingHeapOccupancyPercent=70 -noverify -XX:TieredStopAtLevel=1 -web -webAllowOthers -tcp -tcpAllowOthers -browser`
 
 # Security
-jwt token was used to get access for authorized end points. Application supports 2 role type; USER, ADMIN.
+jwt token was used to get access for authorized end points. You have to provide token as below to get access for authorized endpoints;
+
+`Authorization: Bearer [token]`
+
+Application supports 2 role type; USER, ADMIN.
 ADMIN user is automatically creating during the initialization of application.
 
 `api.security.admin_user=admin@readingisgood.com`
@@ -51,3 +55,7 @@ Three different authority check were applied to endpoints in application:
 `@customerOwnerShipAccessChecker.check(#id)`
 
 OwnerShipAccessChecker is used to allow updates to specific resources for only it's owners.
+
+
+# Api Test
+I have put sample postman requests in postman directory, you can import it and test requests.
