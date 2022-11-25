@@ -34,7 +34,7 @@ public class AuthenticationService {
     private String adminPassword;
 
     private final PasswordEncoder bcryptEncoder;
-    private final CustomerService userService;
+    private final CustomerService customerService;
     private final AccessToken accessJWTToken;
     private final AuthenticationManager authenticationManager;
 
@@ -43,15 +43,15 @@ public class AuthenticationService {
                                  AccessToken accessJWTToken,
                                  AuthenticationManager authenticationManager) {
         this.bcryptEncoder = bcryptEncoder;
-        this.userService = userService;
+        this.customerService = userService;
         this.accessJWTToken = accessJWTToken;
         this.authenticationManager = authenticationManager;
     }
 
     @PostConstruct
     private void init() {
-        if (userService.findAll().isEmpty()) {
-            userService.save(createAdminUser());
+        if (customerService.findAll().isEmpty()) {
+            customerService.save(createAdminUser());
         }
     }
 
@@ -71,7 +71,7 @@ public class AuthenticationService {
     @Transactional
     public CustomerRegistrationResponse register(CustomerRegistrationRequest userRegistrationRequest) {
         CustomerEntity userEntity = createUser(userRegistrationRequest);
-        final CustomerEntity savedUserEntity = userService.save(userEntity);
+        final CustomerEntity savedUserEntity = customerService.save(userEntity);
         return createUserResponse(savedUserEntity);
     }
 
@@ -107,13 +107,8 @@ public class AuthenticationService {
         Authentication authenticationResult = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         if (authenticationResult.isAuthenticated()) {
             UserDetails userDetails = (UserDetails) authenticationResult.getPrincipal();
-            final CustomerEntity userEntity = userService.findByEmail(userDetails.getUsername());
-            if (!userEntity.isActivated() || !userEntity.getStatus().equals(Status.ACTIVE.toString())) {
-                throw new UserActivationNeededException();
-            }
+            final CustomerEntity userEntity = customerService.findByEmail(userDetails.getUsername());
             final RoleType userRole = getUserRole(email);
-            userEntity.setRole(userRole.value);
-            userService.save(userEntity);
             final CustomerResponse userResponse = CustomerMapper.INSTANCE.mapEntityToResponse(userEntity);
             final String token = accessJWTToken.generateToken(userDetails, userRole);
             LoginResponse loginResponse = new LoginResponse();
