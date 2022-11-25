@@ -14,15 +14,15 @@ import java.util.List;
 @Service
 public class UserDetailServiceImpl implements UserDetailService {
 
-    private final CustomerService userService;
+    private final CustomerService customerService;
 
     public UserDetailServiceImpl(CustomerService userService) {
-        this.userService = userService;
+        this.customerService = userService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws BadCredentialsException {
-        CustomerEntity user = userService.findByEmail(email);
+        CustomerEntity user = customerService.findByEmail(email);
         if (user == null) {
             throw new BadCredentialsException("User not found.");
         }
