@@ -23,7 +23,4 @@ public class CustomerUpdateRequest extends BaseRequest {
     @NotNull(message = "name is mandatory")
     @ApiModelProperty(required = true)
     private String surname;
-    private String birthDate;
-    private String address;
-    private String phone;
 }

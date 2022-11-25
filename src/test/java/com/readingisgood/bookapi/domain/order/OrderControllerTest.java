@@ -69,10 +69,8 @@ class OrderControllerTest {
         customer.setId(customerId);
         customer.setName("GwvC0VU");
         customer.setEmail("fj0Wg4");
-        customer.setAddress("Gzh4");
         customer.setRole(RoleType.USER.value);
         customer.setSurname("928y");
-        customer.setBirthDate("IB7r");
 
         BookEntity bookEntity = new BookEntity();
         bookEntity.setName("rEH9");

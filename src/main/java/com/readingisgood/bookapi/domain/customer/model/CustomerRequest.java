@@ -12,8 +12,5 @@ public class CustomerRequest extends BaseRequest {
     private UUID id;
     private String name;
     private String surname;
-    private String birthDate;
-    private String address;
     private String email;
-    private String phone;
 }

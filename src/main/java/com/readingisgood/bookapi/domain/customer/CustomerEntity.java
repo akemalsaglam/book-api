@@ -32,10 +32,6 @@ public class CustomerEntity extends BaseEntity {
     @NotNull(message = "surname is mandatory")
     private String surname;
 
-    private String birthDate;
-
-    private String address;
-
     @NotNull(message = "email is mandatory")
     @Email
     private String email;
@@ -44,8 +40,6 @@ public class CustomerEntity extends BaseEntity {
     private String role;
 
     private String password;
-
-    private String phone;
 
     private boolean isActivated;
 

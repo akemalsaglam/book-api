@@ -6,12 +6,10 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserRegistrationResponse extends BaseResponse {
+public class CustomerRegistrationResponse extends BaseResponse {
 
     private String name;
     private String surname;
     private String email;
-    private String birthDate;
-    private String address;
     private String role;
 }

@@ -6,10 +6,9 @@ import com.readingisgood.bookapi.domain.common.service.BaseService;
 import com.readingisgood.bookapi.domain.customer.model.CustomerMapper;
 import com.readingisgood.bookapi.domain.customer.model.CustomerRequest;
 import com.readingisgood.bookapi.domain.customer.model.CustomerResponse;
-import com.readingisgood.bookapi.domain.customer.model.CustomerUpdateRequest;
 import com.readingisgood.bookapi.domain.order.OrderEntity;
-import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.domain.order.OrderService;
+import com.readingisgood.bookapi.domain.order.model.OrderMapper;
 import com.readingisgood.bookapi.security.SecurityContextUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController

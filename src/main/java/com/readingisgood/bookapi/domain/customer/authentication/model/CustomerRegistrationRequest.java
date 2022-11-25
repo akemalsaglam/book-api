@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserRegistrationRequest extends BaseRequest {
+public class CustomerRegistrationRequest extends BaseRequest {
 
     @NotNull
     @NotBlank(message = "name is required.")
@@ -35,11 +35,5 @@ public class UserRegistrationRequest extends BaseRequest {
     @NotBlank(message = "repassword is required.")
     @Length(min = 5, message = "repassword length should be >=5")
     private String repassword;
-
-    private String phone;
-
-    private String birthDate;
-
-    private String address;
 
 }

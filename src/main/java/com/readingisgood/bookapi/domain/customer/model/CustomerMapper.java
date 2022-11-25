@@ -30,12 +30,6 @@ public interface CustomerMapper extends BaseMapper<CustomerEntity, CustomerReque
             nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     CustomerEntity mapRequestToEntity(CustomerRequest customerRequest);
 
-    @Named("mapUpdateRequestToRequest")
-    @BeanMapping(
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-    CustomerRequest mapUpdateRequestToRequest(CustomerUpdateRequest customerUpdateRequest);
-
     @IterableMapping(qualifiedByName = "mapEntityToResponse")
     @Named("mapEntityListToResponseList")
     List<CustomerResponse> mapEntityListToResponseList(List<CustomerEntity> entity);

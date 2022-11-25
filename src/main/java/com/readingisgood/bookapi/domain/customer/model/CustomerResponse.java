@@ -12,10 +12,7 @@ public class CustomerResponse extends BaseResponse {
     private UUID id;
     private String name;
     private String surname;
-    private String birthDate;
-    private String address;
     private String email;
-    private String phone;
     private String status;
     private String role;
     private boolean isActivated;

@@ -2,7 +2,6 @@ package com.readingisgood.bookapi.domain.common.controller;
 
 import com.readingisgood.bookapi.domain.common.exception.ResourceNotFoundException;
 import com.readingisgood.bookapi.domain.common.jpa.BaseEntity;
-import com.readingisgood.bookapi.domain.common.jpa.Status;
 import com.readingisgood.bookapi.domain.common.mapper.BaseMapper;
 import com.readingisgood.bookapi.domain.common.service.BaseService;
 

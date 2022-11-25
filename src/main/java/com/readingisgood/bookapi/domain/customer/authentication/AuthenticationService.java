@@ -9,8 +9,8 @@ import com.readingisgood.bookapi.security.RoleType;
 import com.readingisgood.bookapi.security.accesstoken.impl.AccessToken;
 import com.readingisgood.bookapi.domain.common.exception.UserActivationNeededException;
 import com.readingisgood.bookapi.domain.customer.authentication.model.LoginResponse;
-import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationRequest;
-import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationResponse;
+import com.readingisgood.bookapi.domain.customer.authentication.model.CustomerRegistrationRequest;
+import com.readingisgood.bookapi.domain.customer.authentication.model.CustomerRegistrationResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -69,19 +69,17 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public UserRegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
+    public CustomerRegistrationResponse register(CustomerRegistrationRequest userRegistrationRequest) {
         CustomerEntity userEntity = createUser(userRegistrationRequest);
         final CustomerEntity savedUserEntity = userService.save(userEntity);
         return createUserResponse(savedUserEntity);
     }
 
-    private CustomerEntity createUser(UserRegistrationRequest userRegistrationRequest) {
+    private CustomerEntity createUser(CustomerRegistrationRequest userRegistrationRequest) {
         CustomerEntity userEntity = new CustomerEntity();
         userEntity.setName(userRegistrationRequest.getName());
         userEntity.setSurname(userRegistrationRequest.getSurname());
         userEntity.setEmail(userRegistrationRequest.getEmail());
-        userEntity.setAddress(userRegistrationRequest.getAddress());
-        userEntity.setBirthDate(userRegistrationRequest.getBirthDate());
         userEntity.setRole(RoleType.USER.value);
 
         /**
@@ -91,17 +89,15 @@ public class AuthenticationService {
         userEntity.setActivated(true);
         userEntity.setStatus(Status.ACTIVE.value);
 
-        userEntity.setPhone(userEntity.getPhone());
         userEntity.setPassword(bcryptEncoder.encode(userRegistrationRequest.getPassword()));
         return userEntity;
     }
 
-    private UserRegistrationResponse createUserResponse(CustomerEntity saveEntity) {
-        UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
+    private CustomerRegistrationResponse createUserResponse(CustomerEntity saveEntity) {
+        CustomerRegistrationResponse userRegistrationResponse = new CustomerRegistrationResponse();
         userRegistrationResponse.setName(saveEntity.getName());
         userRegistrationResponse.setSurname(saveEntity.getSurname());
         userRegistrationResponse.setEmail(saveEntity.getEmail());
-        userRegistrationResponse.setBirthDate(saveEntity.getBirthDate());
         userRegistrationResponse.setRole(saveEntity.getRole());
         return userRegistrationResponse;
     }

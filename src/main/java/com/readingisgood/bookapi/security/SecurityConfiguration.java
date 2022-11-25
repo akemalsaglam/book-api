@@ -1,7 +1,6 @@
 package com.readingisgood.bookapi.security;
 
 import com.readingisgood.bookapi.security.accessfilter.AccessTokenFilter;
-import com.readingisgood.bookapi.security.accessfilter.PassiveAccountFilter;
 import com.readingisgood.bookapi.security.userdetail.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,15 +48,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final UserDetailServiceImpl jwtUserDetailService;
     private final AccessTokenFilter accessTokenFilter;
-    private final PassiveAccountFilter passiveAccountFilter;
 
     public SecurityConfiguration(
             UserDetailServiceImpl jwtUserDetailService,
-            AccessTokenFilter accessTokenFilter,
-            PassiveAccountFilter passiveAccountFilter) {
+            AccessTokenFilter accessTokenFilter) {
         this.jwtUserDetailService = jwtUserDetailService;
         this.accessTokenFilter = accessTokenFilter;
-        this.passiveAccountFilter = passiveAccountFilter;
     }
 
     @Override
@@ -104,7 +100,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private void applyFilters(HttpSecurity http) {
         http.addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(passiveAccountFilter, accessTokenFilter.getClass());
     }
 
     @Override

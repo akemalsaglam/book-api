@@ -7,8 +7,8 @@ import com.readingisgood.bookapi.domain.customer.CustomerEntity;
 import com.readingisgood.bookapi.domain.customer.CustomerService;
 import com.readingisgood.bookapi.domain.customer.authentication.model.LoginRequest;
 import com.readingisgood.bookapi.domain.customer.authentication.model.LoginResponse;
-import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationRequest;
-import com.readingisgood.bookapi.domain.customer.authentication.model.UserRegistrationResponse;
+import com.readingisgood.bookapi.domain.customer.authentication.model.CustomerRegistrationRequest;
+import com.readingisgood.bookapi.domain.customer.authentication.model.CustomerRegistrationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,7 +35,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<Object> register(@Valid @RequestBody UserRegistrationRequest userRegistrationRequest) {
+    public ResponseEntity<Object> register(@Valid @RequestBody CustomerRegistrationRequest userRegistrationRequest) {
         try {
             if (!userRegistrationRequest.getPassword().equals(userRegistrationRequest.getRepassword())) {
                 throw new PassworsNotMatchException();
@@ -44,7 +44,7 @@ public class AuthenticationController {
             if (userCheck != null) {
                 throw new UserAlreadyExistException();
             }
-            final UserRegistrationResponse userRegistrationResponse = authenticationService.register(userRegistrationRequest);
+            final CustomerRegistrationResponse userRegistrationResponse = authenticationService.register(userRegistrationRequest);
             log.info("message='user registered successfully.', user={}", userRegistrationRequest.getEmail());
             return ResponseEntity.ok().body(userRegistrationResponse);
         } catch (PassworsNotMatchException exception) {
